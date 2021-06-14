@@ -1,5 +1,7 @@
 package com.gabia.alarmdistribution.service;
 
+import org.springframework.core.env.Environment;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -7,13 +9,22 @@ import java.util.Map;
 @Service
 public class SlackService implements SendService{
 
+    private Environment env;
+    private KafkaTemplate<String, Map<String, Object>> kafkaTemplate;
+
+    public SlackService(Environment env, KafkaTemplate<String, Map<String, Object>> kafkaTemplate) {
+        this.env = env;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
     @Override
     public String send(Map<String, Object> map) {
         String accessToken = getAccessToken(1L, 1L);
+        map.put("accessToken", accessToken);
 
-        
+        kafkaTemplate.send(env.getProperty("topic.slack"), map);
 
-        return null;
+        return "성공";
     }
 
 
