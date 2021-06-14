@@ -1,7 +1,7 @@
 package com.gabia.alarmdistribution.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabia.alarmdistribution.service.DistributionService;
+import com.gabia.alarmdistribution.service.SendService;
 import com.gabia.alarmdistribution.vo.request.Raw;
 import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(DistributionController.class)
-public class DistributionControllerTest {
+@WebMvcTest(SendController.class)
+public class SendControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -29,11 +29,11 @@ public class DistributionControllerTest {
     private ObjectMapper mapper;
 
     @MockBean
-    private DistributionService service;
+    private SendService service;
 
     @Test
     public void 사용자_알림_전송_컨트롤러_테스트() throws Exception {
-        when(service.distributeRequest()).thenReturn("알림 전송 요청 완료");
+        when(service.send()).thenReturn("알림 전송 요청 완료");
 
         RequestAlarmCommon requestAlarmCommon = new RequestAlarmCommon();
         requestAlarmCommon.setGroupId(1L);

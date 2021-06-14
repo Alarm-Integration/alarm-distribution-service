@@ -1,6 +1,6 @@
 package com.gabia.alarmdistribution.controller;
 
-import com.gabia.alarmdistribution.service.DistributionService;
+import com.gabia.alarmdistribution.service.SendService;
 import com.gabia.alarmdistribution.vo.ResponseObject;
 import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
 import org.springframework.http.HttpStatus;
@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class DistributionController {
+public class SendController {
 
-    private final DistributionService distributionService;
+    private final SendService sendService;
 
-    public DistributionController(DistributionService distributionService) {
-        this.distributionService = distributionService;
+    public SendController(SendService sendService) {
+        this.sendService = sendService;
     }
 
     @PostMapping

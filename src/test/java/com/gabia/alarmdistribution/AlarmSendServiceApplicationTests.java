@@ -2,7 +2,7 @@ package com.gabia.alarmdistribution;
 
 import org.junit.jupiter.api.Test;
 
-class AlarmDistributionServiceApplicationTests {
+class AlarmSendServiceApplicationTests {
 
     @Test
     void contextLoads() {
