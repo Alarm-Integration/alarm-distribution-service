@@ -28,13 +28,8 @@ public class SendControllerTest {
     @Autowired
     private ObjectMapper mapper;
 
-    @MockBean
-    private SendService service;
-
     @Test
     public void 사용자_알림_전송_컨트롤러_테스트() throws Exception {
-        when(service.send()).thenReturn("알림 전송 요청 완료");
-
         RequestAlarmCommon requestAlarmCommon = new RequestAlarmCommon();
         requestAlarmCommon.setGroupId(1L);
         requestAlarmCommon.setTitle("알림 제목");
