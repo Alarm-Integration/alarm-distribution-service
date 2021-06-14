@@ -21,7 +21,15 @@ public class SendServiceImpl {
     public boolean send(RequestAlarmCommon alarmCommon) {
         // 분리 및 각 서비스로 전송
         for (Raw raw : alarmCommon.getRaws()) {
-            sendService.get(raw.getAppName()).send();
+            Map<String, Object> map = new HashMap<>();
+            map.put("groupId", alarmCommon.getGroupId());
+            map.put("title", alarmCommon.getTitle());
+            map.put("content", alarmCommon.getTitle());
+            map.put("bookmarks", alarmCommon.getBookmarks());
+            map.put("raws", raw);
+            // 추후 User Id 값 포함 넘기기
+//            map.put("userId", userId);
+            sendService.get(raw.getAppName()).send(map);
         }
 
         return true;
