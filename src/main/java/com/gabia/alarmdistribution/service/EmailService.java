@@ -18,12 +18,12 @@ public class EmailService implements SendService{
     }
 
     @Override
-    public String send(Map<String, Object> map) {
+    public boolean send(Map<String, Object> map) {
         String senderAddress = getSenderAddress(1L);
         map.put("sender", senderAddress);
         kafkaTemplate.send(env.getProperty("topic.email"), map);
 
-        return "성공";
+        return true;
     }
 
     // 사용자 userId 값으로 보내는 주소(sender) 받아오기

@@ -3,21 +3,40 @@ package com.gabia.alarmdistribution.service;
 import com.gabia.alarmdistribution.vo.request.Raw;
 import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class SendServiceImplTest {
 
-    @Autowired
-    SendServiceImpl service;
+    @Mock
+    private Map<String, SendService> sendService;
+
+    @Mock
+    EmailService emailService;
+
+    @Mock
+    SlackService slackService;
+
+    @Mock
+    SMSService smsService;
+
+    @InjectMocks
+    private SendServiceImpl service;
 
     @Test
     public void send_테스트(){
+        // given
         String appName = "slack";
 
         ArrayList<String> address = new ArrayList<>() {
@@ -54,6 +73,18 @@ class SendServiceImplTest {
         alarmCommon.setBookmarks(bookmarks);
         alarmCommon.setRaws(raws);
 
+        emailService = mock(EmailService.class);
+        slackService = mock(SlackService.class);
+        smsService = mock(SMSService.class);
+        sendService = new HashMap<>();
+        sendService.put("email", emailService);
+        sendService.put("slack", slackService);
+        sendService.put("sms", smsService);
+
+        // when
+        given(service.send(alarmCommon)).willReturn(true);
+
+        // then
         assertThat(service.send(alarmCommon)).isEqualTo(true);
     }
 }

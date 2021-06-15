@@ -93,9 +93,9 @@ class EmailServiceTest {
         given(kafkaTemplate.send(env.getProperty("topic.email"), map)).willReturn(listenableFuture);
 
         // when
-        String send = emailService.send(map);
+        boolean isSend = emailService.send(map);
 
         // then
-        assertThat(send).isEqualTo("성공");
+        assertThat(isSend).isEqualTo(true);
     }
 }

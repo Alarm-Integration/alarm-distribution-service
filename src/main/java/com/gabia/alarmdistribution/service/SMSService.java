@@ -18,12 +18,12 @@ public class SMSService implements SendService {
     }
 
     @Override
-    public String send(Map<String, Object> map) {
+    public boolean send(Map<String, Object> map) {
         String senderNumber = getSenderNumber(1L);
         map.put("sender", senderNumber);
         kafkaTemplate.send(env.getProperty("topic.sms"), map);
 
-        return "성공";
+        return true;
     }
 
     // 사용자 userId 값으로 보내는 번호(sender) 받아오기

@@ -92,9 +92,9 @@ class SMSServiceTest {
         given(kafkaTemplate.send(env.getProperty("topic.sms"), map)).willReturn(listenableFuture);
 
         // when
-        String send = smsService.send(map);
+        boolean isSend = smsService.send(map);
 
         // then
-        assertThat(send).isEqualTo("성공");
+        assertThat(isSend).isEqualTo(true);
     }
 }

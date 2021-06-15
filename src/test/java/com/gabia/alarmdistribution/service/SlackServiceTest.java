@@ -93,9 +93,9 @@ public class SlackServiceTest {
         given(kafkaTemplate.send(env.getProperty("topic.slack"), map)).willReturn(listenableFuture);
 
         // when
-        String send = slackService.send(map);
+        boolean isSend = slackService.send(map);
 
         // then
-        assertThat(send).isEqualTo("성공");
+        assertThat(isSend).isEqualTo(true);
     }
 }
