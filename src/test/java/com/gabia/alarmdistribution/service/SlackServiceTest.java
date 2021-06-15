@@ -45,47 +45,22 @@ public class SlackServiceTest {
     @Test
     void sendTest(){
         // given
-        String appName1 = "slack";
-        String appName2 = "sms";
-        String appName3 = "email";
+        String appName = "slack";
 
-        ArrayList<String> address1 = new ArrayList<>() {
+        ArrayList<String> address = new ArrayList<>() {
             {
                 add("T13DA561");
                 add("U13DA561");
                 add("C13DA561");
             }
         };
-        ArrayList<String> address2 = new ArrayList<>() {
-            {
-                add("01012344321");
-                add("01037826481");
-                add("01027594837");
-            }
-        };
-        ArrayList<String> address3 = new ArrayList<>() {
-            {
-                add("test@gmail.com");
-                add("tes1@naver.com");
-                add("tes3@gabia.com");
-            }
-        };
 
-        Raw raw1 = new Raw();
-        raw1.setAppName(appName1);
-        raw1.setAddress(address1);
-        Raw raw2 = new Raw();
-        raw2.setAppName(appName2);
-        raw2.setAddress(address2);
-        Raw raw3 = new Raw();
-        raw3.setAppName(appName3);
-        raw3.setAddress(address3);
-
+        Raw raw = new Raw();
+        raw.setAppName(appName);
+        raw.setAddress(address);
         ArrayList<Raw> raws = new ArrayList<>(){
             {
-                add(raw1);
-                add(raw2);
-                add(raw3);
+                add(raw);
             }
         };
 
@@ -114,8 +89,8 @@ public class SlackServiceTest {
         map.put("raws", raws);
 
         ListenableFuture listenableFuture = mock(ListenableFuture.class);
-        given(kafkaTemplate.send("slack", map)).willReturn(listenableFuture);
         given(env.getProperty("topic.slack")).willReturn("slack");
+        given(kafkaTemplate.send(env.getProperty("topic.slack"), map)).willReturn(listenableFuture);
 
         // when
         String send = slackService.send(map);
