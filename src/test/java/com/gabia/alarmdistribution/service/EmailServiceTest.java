@@ -39,7 +39,7 @@ class EmailServiceTest {
         // String senderAddress =  getSenderAddress(userId);
         String accessToken = emailService.getSenderAddress(1L);
 
-        assertThat(accessToken).isEqualTo("");
+        assertThat(accessToken).isEqualTo("gabia@gabia.com");
     }
 
     @Test
