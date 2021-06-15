@@ -37,6 +37,9 @@ public class SendControllerTest {
     @Mock
     private SendServiceImpl service;
 
+    @InjectMocks
+    private SendController controller;
+
     @Test
     public void 사용자_알림_전송_컨트롤러_테스트() throws Exception {
         RequestAlarmCommon requestAlarmCommon = new RequestAlarmCommon();

@@ -39,7 +39,7 @@ public class SlackServiceTest {
         // String accessToken =  getAccessToken(groupId, userId);
         String accessToken = slackService.getAccessToken(1L, 1L);
 
-        assertThat(accessToken).isEqualTo("");
+        assertThat(accessToken).isEqualTo("xoxb-2148325514801-2142207279172-ttsneJk3GUgXqkw3dtPPK5bS");
     }
 
     @Test
