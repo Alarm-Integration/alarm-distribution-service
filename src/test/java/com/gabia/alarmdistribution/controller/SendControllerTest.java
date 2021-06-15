@@ -5,19 +5,15 @@ import com.gabia.alarmdistribution.service.SendServiceImpl;
 import com.gabia.alarmdistribution.vo.request.Raw;
 import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 
-import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,14 +27,8 @@ public class SendControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Mock
+    @MockBean
     private SendServiceImpl service;
-
-    @InjectMocks
-    private SendController controller;
 
     @Test
     public void 사용자_알림_전송_컨트롤러_테스트() throws Exception {
@@ -84,17 +74,23 @@ public class SendControllerTest {
             }
         });
 
-        String request = mapper.writeValueAsString(requestAlarmCommon);
-
         given(service.send(requestAlarmCommon)).willReturn(true);
 
         this.mockMvc.perform(post("/")
-                .content(request)
+                .content(asJsonString(requestAlarmCommon))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", is("알림 전송 요청 완료")))
-                .andExpect(jsonPath("$.result", is(true)));
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.result").exists());
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
