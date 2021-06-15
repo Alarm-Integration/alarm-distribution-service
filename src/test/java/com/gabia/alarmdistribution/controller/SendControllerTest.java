@@ -1,32 +1,41 @@
 package com.gabia.alarmdistribution.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabia.alarmdistribution.service.SendService;
+import com.gabia.alarmdistribution.service.SendServiceImpl;
 import com.gabia.alarmdistribution.vo.request.Raw;
 import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(SendController.class)
+
+@SpringBootTest
+@AutoConfigureMockMvc
 public class SendControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Mock
+    private SendServiceImpl service;
 
     @Test
     public void 사용자_알림_전송_컨트롤러_테스트() throws Exception {
@@ -74,12 +83,15 @@ public class SendControllerTest {
 
         String request = mapper.writeValueAsString(requestAlarmCommon);
 
+        given(service.send(requestAlarmCommon)).willReturn(true);
+
         this.mockMvc.perform(post("/")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", is("알림 전송 요청 완료")));
+                .andExpect(jsonPath("$.message", is("알림 전송 요청 완료")))
+                .andExpect(jsonPath("$.result", is(true)));
     }
 }
