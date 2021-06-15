@@ -9,6 +9,7 @@ stages:
   - deploy
 
 test:
+  image: gradle:6.9.0-jdk11
   only:
     - feature/ci-cd
   stage: test
