@@ -1,0 +1,1 @@
+[![coverage report](https://gitlab.gabia.com/mentoring/newbie/2021.05/mentoring-alarm/playground/alarm-distribution-service/badges/feature/ci-cd/coverage.svg)](https://gitlab.gabia.com/mentoring/newbie/2021.05/mentoring-alarm/playground/alarm-distribution-service/-/commits/feature/ci-cd)
