@@ -1,13 +1,17 @@
-# ...
+image: docker:19.03.12
+
 variables:
   JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/build/jacocoCsv'
-# ...
+
 stages:
   - test
-# ...
+  - build
+  - deploy
+
 test:
+  only:
+    - feature/ci-cd
   stage: test
   script:
-    # Any task that runs your tests
-    - ./gradlew check
+    - gradlew check
     - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' $JACOCO_CSV_LOCATION
