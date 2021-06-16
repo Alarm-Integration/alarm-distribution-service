@@ -28,6 +28,6 @@ public class SMSService implements SendService {
 
     // 사용자 userId 값으로 보내는 번호(sender) 받아오기
     public String getSenderNumber(Long userId) {
-        return "1544-4370";
+        return "01092988726";
     }
 }
