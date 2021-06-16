@@ -28,6 +28,6 @@ public class EmailService implements SendService{
 
     // 사용자 userId 값으로 보내는 주소(sender) 받아오기
     public String getSenderAddress(Long userId){
-        return "gabia@gabia.com";
+        return "nameks@naver.com";
     }
 }

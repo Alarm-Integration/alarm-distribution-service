@@ -22,13 +22,14 @@ public class SendServiceImpl {
         // 분리 및 각 서비스로 전송
         for (Raw raw : alarmCommon.getRaws()) {
             Map<String, Object> map = new HashMap<>();
-            map.put("groupId", alarmCommon.getGroupId());
             map.put("title", alarmCommon.getTitle());
-            map.put("content", alarmCommon.getTitle());
-            map.put("bookmarks", alarmCommon.getBookmarks());
-            map.put("raws", raw);
+            map.put("content", alarmCommon.getContent());
+            map.put("raws", raw.getAddress());
+            // todo
+            // 그룹아이디로 권한 체크
+            // 북마크 -> raws로 풀어서 리퀘스트 넘겨주기
             // 추후 User Id 값 포함 넘기기
-//            map.put("userId", userId);
+            // map.put("userId", userId);
             sendService.get(raw.getAppName()).send(map);
         }
 
