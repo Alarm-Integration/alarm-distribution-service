@@ -6,15 +6,15 @@ variables:
   ENVIROMENT: staging
 
 stages:
-#  - test
   - build
+  - test
   - deploy
 
-#test:
-#  image: gradle:6.9.0-jdk11
-#  stage: test
-#  script:
-#    - gradle check
+test:
+  image: gradle:6.9.0-jdk11
+  stage: test
+  script:
+    - gradle test
 
 build:
   stage: build
