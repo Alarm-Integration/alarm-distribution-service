@@ -2,8 +2,9 @@ image: docker:19.03.12
 
 variables:
   JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/build/jacocoCsv'
-  CONTAINER_NAME: slack-service
-  ENVIROMENT: staging
+  CONTAINER_NAME: alarm-distribution-service
+
+ENVIROMENT: staging
 
 stages:
   - test
