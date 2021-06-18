@@ -2,6 +2,8 @@ image: docker:19.03.12
 
 variables:
   JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/build/jacocoCsv'
+  CONTAINER_NAME: slack-service
+  ENVIROMENT: staging
 
 stages:
   - test
@@ -13,4 +15,25 @@ test:
   stage: test
   script:
     - gradle check
-    - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' $JACOCO_CSV_LOCATION
+
+build:
+  stage: build
+  script:
+    - docker login -u $DOCKER_HUB_ID -p $DOCKER_HUB_PASSWORD
+    - docker build -t $DOCKER_HUB_ID/$IMAGE_NAME .
+    - docker push $DOCKER_HUB_ID/$IMAGE_NAME
+  environment:
+    name: $ENVIROMENT
+
+deploy:
+  stage: deploy
+  script:
+    - apk upgrade && apk update
+    - apk add openssh-client
+    - apk add sshpass
+    - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER docker pull $DOCKER_HUB_ID/$IMAGE_NAME
+    - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER "docker stop $CONTAINER_NAME || true"
+    - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER docker run --rm -d -p $ALARM_DISTRIBUTION_SERVICE_PORT:$ALARM_DISTRIBUTION_SERVICE_PORT --net $DOCKER_NETWORK --name $CONTAINER_NAME $DOCKER_HUB_ID/$IMAGE_NAME
+  environment:
+    name: $ENVIROMENT
+    url: $STAGING_SERVER
