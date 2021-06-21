@@ -2,10 +2,9 @@ package com.gabia.alarmdistribution.configuration;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -17,14 +16,10 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
-// 추후 Spring config server 에서 환경변수 값을 들고올 것
-@PropertySource("classpath:kafka.properties")
 public class KafkaConfiguration {
-    private final Environment env;
 
-    public KafkaConfiguration(Environment env) {
-        this.env = env;
-    }
+    @Value("${kafka.bootstrap.servers}")
+    private String kafkaServer;
 
     @Bean
     public KafkaTemplate<String, Map<String, Object>> objectKafkaTemplate(){
@@ -39,7 +34,7 @@ public class KafkaConfiguration {
     private Map<String, Object> setConfig(){
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("bootstrap.servers"));
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
