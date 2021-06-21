@@ -33,7 +33,7 @@ deploy:
     - apk add sshpass
     - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER docker pull $DOCKER_HUB_ID/$IMAGE_NAME
     - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER "docker stop $CONTAINER_NAME || true"
-    - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER docker run --rm -d -p $ALARM_DISTRIBUTION_SERVICE_PORT:$ALARM_DISTRIBUTION_SERVICE_PORT --net $DOCKER_NETWORK --name $CONTAINER_NAME $DOCKER_HUB_ID/$IMAGE_NAME
+    - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER docker run --rm -d -p $ALARM_DISTRIBUTION_SERVICE_PORT:$ALARM_DISTRIBUTION_SERVICE_PORT -e HOST_IP=$HOST_IP --net $DOCKER_NETWORK --name $CONTAINER_NAME $DOCKER_HUB_ID/$IMAGE_NAME
   environment:
     name: $ENVIROMENT
     url: $STAGING_SERVER
