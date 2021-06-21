@@ -1,15 +1,25 @@
 server:
-  port: 0
+  port: 30000
 
 eureka:
   instance:
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    ip-address: "${HOST_IP}"
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
+      defaultZone: http://139.150.75.239:8761/eureka
 
 spring:
   application:
     name: alarm-distribution-service
+
+kafka:
+  bootstrap:
+    servers: 139.150.75.240:9092
+
+topic:
+  slack: slack
+  email: email
+  sms: sms
