@@ -17,4 +17,26 @@ public class Raw {
         this.appName = appName;
         this.address = address;
     }
+
+    public static Raw createSlackRaw(List<String> address) {
+        return Raw.builder()
+                .appName("slack")
+                .address(address)
+                .build();
+    }
+
+    public static Raw createSMSRaw(List<String> address) {
+        return Raw.builder()
+                .appName("sms")
+                .address(address)
+                .build();
+    }
+
+    public static Raw createEmailRaw(List<String> address) {
+        return Raw.builder()
+                .appName("email")
+                .address(address)
+                .build();
+    }
+
 }

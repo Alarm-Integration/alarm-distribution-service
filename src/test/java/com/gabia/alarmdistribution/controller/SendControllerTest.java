@@ -11,8 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,43 +34,43 @@ public class SendControllerTest {
 
     @Test
     public void 사용자_알림_전송_컨트롤러_테스트() throws Exception {
+        //given
+        Long groupId = 1L;
+        String title = "알림 제목";
+        String content = "알림 내용";
+
+        List<Integer> bookmarksIds = Arrays.asList(1, 2);
+
+        Raw slackRaw = Raw.createSlackRaw(Arrays.asList("U1234", "U4321"));
+        Raw smsRaw = Raw.createSMSRaw(Arrays.asList("01012341234", "01043214321"));
+        Raw emailRaw = Raw.createEmailRaw(Arrays.asList("test@gmail.com", "test@naver.com"));
+
+        List<Raw> raws = Arrays.asList(slackRaw, emailRaw, smsRaw);
+
         RequestAlarmCommon requestAlarmCommon = new RequestAlarmCommon();
-        requestAlarmCommon.setGroupId(1L);
-        requestAlarmCommon.setTitle("알림 제목");
-        requestAlarmCommon.setContent("알림 내용");
-        requestAlarmCommon.setBookmarks(Arrays.asList(1, 2));
-
-        Raw slackRaw = Raw.builder()
-                .appName("slack")
-                .address(Arrays.asList("U1234", "U4321"))
-                .build();
-
-        Raw emailRaw = Raw.builder()
-                .appName("email")
-                .address(Arrays.asList("test@gmail.com", "test@naver.com"))
-                .build();
-
-        Raw smsRaw = Raw.builder()
-                .appName("sms")
-                .address(Arrays.asList("01012341234","01043214321"))
-                .build();
-
-        requestAlarmCommon.setRaws(Arrays.asList(slackRaw, emailRaw, smsRaw));
-
+        requestAlarmCommon.setGroupId(groupId);
+        requestAlarmCommon.setTitle(title);
+        requestAlarmCommon.setContent(content);
+        requestAlarmCommon.setBookmarks(bookmarksIds);
+        requestAlarmCommon.setRaws(raws);
 
         given(service.send(requestAlarmCommon)).willReturn(true);
 
-        this.mockMvc.perform(post("/")
+        //when
+        ResultActions result = this.mockMvc.perform(post("/")
                 .content(asJsonString(requestAlarmCommon))
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.result").exists());
+                .accept(MediaType.APPLICATION_JSON));
+
+        //then
+        result
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").exists())
+            .andExpect(jsonPath("$.result").exists());
     }
 
-    public static String asJsonString(final Object obj) {
+    private static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
