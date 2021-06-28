@@ -1,9 +1,9 @@
-package com.gabia.alarmdistribution.vo.request;
+package com.gabia.alarmdistribution.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -11,8 +11,6 @@ public class RequestAlarmCommon {
     private Long groupId;
     private String title;
     private String content;
-
-    private ArrayList<Integer> bookmarks;
-
-    private ArrayList<Raw> raws;
+    private List<Integer> bookmarks;
+    private List<Raw> raws;
 }

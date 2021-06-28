@@ -1,4 +1,4 @@
-package com.gabia.alarmdistribution.vo;
+package com.gabia.alarmdistribution.dto;
 
 import org.junit.jupiter.api.Test;
 
@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResponseObjectTest {
     @Test
-    public void lombok_테스트(){
+    public void lombok_테스트() {
         String message = "response message";
         Object object = new Object();
 

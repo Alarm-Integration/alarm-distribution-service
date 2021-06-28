@@ -1,16 +1,14 @@
 package com.gabia.alarmdistribution.service;
 
-import com.gabia.alarmdistribution.vo.request.Raw;
-import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
+import com.gabia.alarmdistribution.dto.request.Raw;
+import com.gabia.alarmdistribution.dto.request.RequestAlarmCommon;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -35,7 +33,7 @@ class SendServiceImplTest {
     private SendServiceImpl service;
 
     @Test
-    public void send_테스트(){
+    public void send_테스트() {
         // given
         String appName = "slack";
 
@@ -47,20 +45,17 @@ class SendServiceImplTest {
             }
         };
 
-        Raw raw = new Raw();
-        raw.setAppName(appName);
-        raw.setAddress(address);
-        ArrayList<Raw> raws = new ArrayList<>(){
-            {
-                add(raw);
-            }
-        };
+        Raw raw = Raw.builder()
+                .appName(appName)
+                .address(address)
+                .build();
 
+        List<Raw> raws = Arrays.asList(raw);
 
         Long groupId = 1L;
         String title = "알림 제목";
         String content = "알림 내용";
-        ArrayList<Integer> bookmarks = new ArrayList<>(){
+        ArrayList<Integer> bookmarks = new ArrayList<>() {
             {
                 add(1);
             }

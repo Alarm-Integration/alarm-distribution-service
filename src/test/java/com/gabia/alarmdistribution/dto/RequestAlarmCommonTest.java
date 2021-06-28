@@ -1,7 +1,7 @@
-package com.gabia.alarmdistribution.vo;
+package com.gabia.alarmdistribution.dto;
 
-import com.gabia.alarmdistribution.vo.request.Raw;
-import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
+import com.gabia.alarmdistribution.dto.request.Raw;
+import com.gabia.alarmdistribution.dto.request.RequestAlarmCommon;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class RequestAlarmCommonTest {
     private ArrayList<Raw> raws;
 
     @Test
-    public void lombok_테스트(){
+    public void lombok_테스트() {
         String appName1 = "slack";
         String appName2 = "sms";
         String appName3 = "email";
@@ -40,17 +40,22 @@ public class RequestAlarmCommonTest {
             }
         };
 
-        Raw raw1 = new Raw();
-        raw1.setAppName(appName1);
-        raw1.setAddress(address1);
-        Raw raw2 = new Raw();
-        raw2.setAppName(appName2);
-        raw2.setAddress(address2);
-        Raw raw3 = new Raw();
-        raw3.setAppName(appName3);
-        raw3.setAddress(address3);
+        Raw raw1 = Raw.builder()
+                .appName(appName1)
+                .address(address1)
+                .build();
 
-        raws = new ArrayList<>(){
+        Raw raw2 = Raw.builder()
+                .appName(appName2)
+                .address(address2)
+                .build();
+
+        Raw raw3 = Raw.builder()
+                .appName(appName3)
+                .address(address3)
+                .build();
+
+        raws = new ArrayList<>() {
             {
                 add(raw1);
                 add(raw2);
@@ -61,7 +66,7 @@ public class RequestAlarmCommonTest {
         Long groupId = 1L;
         String title = "알림 제목";
         String content = "알림 내용";
-        ArrayList<Integer> bookmarks = new ArrayList<>(){
+        ArrayList<Integer> bookmarks = new ArrayList<>() {
             {
                 add(1);
                 add(2);

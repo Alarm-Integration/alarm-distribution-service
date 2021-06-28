@@ -1,7 +1,7 @@
 package com.gabia.alarmdistribution.service;
 
-import com.gabia.alarmdistribution.vo.request.Raw;
-import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
+import com.gabia.alarmdistribution.dto.request.Raw;
+import com.gabia.alarmdistribution.dto.request.RequestAlarmCommon;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,9 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.util.concurrent.ListenableFuture;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -32,7 +30,7 @@ public class SlackServiceTest {
     private SlackService slackService;
 
     @Test
-    void getAccessTokenTest(){
+    void getAccessTokenTest() {
         // Inmemory DB 삽입(groupId, userId, accessToken);
 
         // DB 접속 및 AccessToken 가져오기
@@ -43,7 +41,7 @@ public class SlackServiceTest {
     }
 
     @Test
-    void sendTest(){
+    void sendTest() {
         // given
         String appName = "slack";
 
@@ -55,20 +53,17 @@ public class SlackServiceTest {
             }
         };
 
-        Raw raw = new Raw();
-        raw.setAppName(appName);
-        raw.setAddress(address);
-        ArrayList<Raw> raws = new ArrayList<>(){
-            {
-                add(raw);
-            }
-        };
+        Raw raw = Raw.builder()
+                .appName(appName)
+                .address(address)
+                .build();
 
+        List<Raw> raws = Arrays.asList(raw);
 
         Long groupId = 1L;
         String title = "알림 제목";
         String content = "알림 내용";
-        ArrayList<Integer> bookmarks = new ArrayList<>(){
+        ArrayList<Integer> bookmarks = new ArrayList<>() {
             {
                 add(1);
             }

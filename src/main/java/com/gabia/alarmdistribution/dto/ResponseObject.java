@@ -1,4 +1,4 @@
-package com.gabia.alarmdistribution.vo;
+package com.gabia.alarmdistribution.dto;
 
 import lombok.Getter;
 import lombok.Setter;

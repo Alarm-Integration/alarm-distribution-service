@@ -1,7 +1,7 @@
 package com.gabia.alarmdistribution.service;
 
-import com.gabia.alarmdistribution.vo.request.Raw;
-import com.gabia.alarmdistribution.vo.request.RequestAlarmCommon;
+import com.gabia.alarmdistribution.dto.request.Raw;
+import com.gabia.alarmdistribution.dto.request.RequestAlarmCommon;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
