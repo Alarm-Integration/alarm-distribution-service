@@ -1,0 +1,17 @@
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+spring:
+  application:
+    name: alarm-distribution-service
+
+kafka:
+  bootstrap:
+    servers: 139.150.75.240:9092
+
+topic:
+  slack: slack
+  email: email
+  sms: sms
