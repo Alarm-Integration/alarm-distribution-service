@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
+@Service("sms")
 public class SMSService implements SendService {
 
     private Environment env;

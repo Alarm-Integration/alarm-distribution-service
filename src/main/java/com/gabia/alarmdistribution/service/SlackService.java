@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
+@Service("slack")
 public class SlackService implements SendService{
 
     private Environment env;

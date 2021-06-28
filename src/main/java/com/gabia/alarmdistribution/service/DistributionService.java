@@ -2,21 +2,16 @@ package com.gabia.alarmdistribution.service;
 
 import com.gabia.alarmdistribution.dto.request.Raw;
 import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @Service
-public class SendServiceImpl {
+public class DistributionService {
     private final Map<String, SendService> sendService;
-
-    public SendServiceImpl(EmailService emailService, SlackService slackService, SMSService smsService) {
-        sendService = new HashMap<>();
-        sendService.put("email", emailService);
-        sendService.put("slack", slackService);
-        sendService.put("sms", smsService);
-    }
 
     public boolean send(CommonAlarmRequest alarmCommon) {
         // 분리 및 각 서비스로 전송

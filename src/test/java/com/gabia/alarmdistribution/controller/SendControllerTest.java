@@ -3,7 +3,7 @@ package com.gabia.alarmdistribution.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabia.alarmdistribution.dto.request.Raw;
 import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
-import com.gabia.alarmdistribution.service.SendServiceImpl;
+import com.gabia.alarmdistribution.service.DistributionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,7 +30,7 @@ public class SendControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private SendServiceImpl service;
+    private DistributionService service;
 
     @Test
     public void 사용자_알림_전송_컨트롤러_테스트() throws Exception {
