@@ -1,9 +1,8 @@
 package com.gabia.alarmdistribution.controller;
 
-import com.gabia.alarmdistribution.service.SendServiceImpl;
-import com.gabia.alarmdistribution.dto.ResponseObject;
 import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
-import org.springframework.http.HttpStatus;
+import com.gabia.alarmdistribution.dto.response.APIResponse;
+import com.gabia.alarmdistribution.service.SendServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +18,9 @@ public class SendController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseObject> sendAlarm(@RequestBody CommonAlarmRequest request) {
-        ResponseObject response = new ResponseObject();
-        response.setMessage("알림 전송 요청 완료");
-        response.setResult(sendService.send(request));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ResponseEntity<APIResponse> sendAlarm(@RequestBody CommonAlarmRequest request) {
+        boolean result = sendService.send(request);
+
+        return ResponseEntity.ok(APIResponse.withMessageAndResult("알림 전송 요청 완료", result));
     }
 }
