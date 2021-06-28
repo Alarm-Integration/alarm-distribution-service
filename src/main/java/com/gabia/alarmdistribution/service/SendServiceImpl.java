@@ -1,7 +1,7 @@
 package com.gabia.alarmdistribution.service;
 
 import com.gabia.alarmdistribution.dto.request.Raw;
-import com.gabia.alarmdistribution.dto.request.RequestAlarmCommon;
+import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class SendServiceImpl {
         sendService.put("sms", smsService);
     }
 
-    public boolean send(RequestAlarmCommon alarmCommon) {
+    public boolean send(CommonAlarmRequest alarmCommon) {
         // 분리 및 각 서비스로 전송
         for (Raw raw : alarmCommon.getRaws()) {
             Map<String, Object> map = new HashMap<>();

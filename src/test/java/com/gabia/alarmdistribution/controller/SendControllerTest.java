@@ -2,7 +2,7 @@ package com.gabia.alarmdistribution.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabia.alarmdistribution.dto.request.Raw;
-import com.gabia.alarmdistribution.dto.request.RequestAlarmCommon;
+import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
 import com.gabia.alarmdistribution.service.SendServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,27 +47,28 @@ public class SendControllerTest {
 
         List<Raw> raws = Arrays.asList(slackRaw, emailRaw, smsRaw);
 
-        RequestAlarmCommon requestAlarmCommon = new RequestAlarmCommon();
-        requestAlarmCommon.setGroupId(groupId);
-        requestAlarmCommon.setTitle(title);
-        requestAlarmCommon.setContent(content);
-        requestAlarmCommon.setBookmarks(bookmarksIds);
-        requestAlarmCommon.setRaws(raws);
+        CommonAlarmRequest commonAlarmRequest = CommonAlarmRequest.builder()
+                .groupId(groupId)
+                .title(title)
+                .content(content)
+                .bookmarks(bookmarksIds)
+                .raws(raws)
+                .build();
 
-        given(service.send(requestAlarmCommon)).willReturn(true);
+        given(service.send(commonAlarmRequest)).willReturn(true);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
-                .content(asJsonString(requestAlarmCommon))
+                .content(asJsonString(commonAlarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 
         //then
         result
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.message").exists())
-            .andExpect(jsonPath("$.result").exists());
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.result").exists());
     }
 
     private static String asJsonString(final Object obj) {

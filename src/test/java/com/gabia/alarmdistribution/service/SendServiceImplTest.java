@@ -1,7 +1,7 @@
 package com.gabia.alarmdistribution.service;
 
 import com.gabia.alarmdistribution.dto.request.Raw;
-import com.gabia.alarmdistribution.dto.request.RequestAlarmCommon;
+import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -55,18 +55,15 @@ class SendServiceImplTest {
         Long groupId = 1L;
         String title = "알림 제목";
         String content = "알림 내용";
-        ArrayList<Integer> bookmarks = new ArrayList<>() {
-            {
-                add(1);
-            }
-        };
+        List<Integer> bookmarksIds = Arrays.asList(1);
 
-        RequestAlarmCommon alarmCommon = new RequestAlarmCommon();
-        alarmCommon.setGroupId(groupId);
-        alarmCommon.setTitle(title);
-        alarmCommon.setContent(content);
-        alarmCommon.setBookmarks(bookmarks);
-        alarmCommon.setRaws(raws);
+        CommonAlarmRequest commonAlarmRequest = CommonAlarmRequest.builder()
+                .groupId(groupId)
+                .title(title)
+                .content(content)
+                .bookmarks(bookmarksIds)
+                .raws(raws)
+                .build();
 
         emailService = mock(EmailService.class);
         slackService = mock(SlackService.class);
@@ -77,9 +74,9 @@ class SendServiceImplTest {
         sendService.put("sms", smsService);
 
         // when
-        given(service.send(alarmCommon)).willReturn(true);
+        given(service.send(commonAlarmRequest)).willReturn(true);
 
         // then
-        assertThat(service.send(alarmCommon)).isEqualTo(true);
+        assertThat(service.send(commonAlarmRequest)).isEqualTo(true);
     }
 }
