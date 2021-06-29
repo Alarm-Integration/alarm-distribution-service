@@ -18,11 +18,11 @@ public class SlackService implements SendService{
     }
 
     @Override
-    public boolean send(Map<String, Object> map) {
+    public boolean send(Map<String, Object> data) {
         String accessToken = getAccessToken(1L, 1L);
-        map.put("accessToken", accessToken);
+        data.put("accessToken", accessToken);
 
-        kafkaTemplate.send(env.getProperty("topic.slack"), map);
+        kafkaTemplate.send(env.getProperty("topic.slack"), data);
 
         return true;
     }

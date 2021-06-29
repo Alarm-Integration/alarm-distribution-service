@@ -18,10 +18,10 @@ public class SMSService implements SendService {
     }
 
     @Override
-    public boolean send(Map<String, Object> map) {
+    public boolean send(Map<String, Object> data) {
         String senderNumber = getSenderNumber(1L);
-        map.put("sender", senderNumber);
-        kafkaTemplate.send(env.getProperty("topic.sms"), map);
+        data.put("sender", senderNumber);
+        kafkaTemplate.send(env.getProperty("topic.sms"), data);
 
         return true;
     }

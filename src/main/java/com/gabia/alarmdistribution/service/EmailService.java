@@ -18,10 +18,10 @@ public class EmailService implements SendService{
     }
 
     @Override
-    public boolean send(Map<String, Object> map) {
+    public boolean send(Map<String, Object> data) {
         String senderAddress = getSenderAddress(1L);
-        map.put("sender", senderAddress);
-        kafkaTemplate.send(env.getProperty("topic.email"), map);
+        data.put("sender", senderAddress);
+        kafkaTemplate.send(env.getProperty("topic.email"), data);
 
         return true;
     }
