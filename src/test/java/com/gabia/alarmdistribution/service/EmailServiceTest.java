@@ -30,17 +30,6 @@ class EmailServiceTest {
     private EmailService emailService;
 
     @Test
-    void getSenderAddressTest() {
-        // Inmemory DB 삽입(userId, senderAddress);
-
-        // DB 접속 및 senderAddress 가져오기
-        // String senderAddress =  getSenderAddress(userId);
-        String accessToken = emailService.getSenderAddress(1L);
-
-//        assertThat(accessToken).isEqualTo("gabia@gabia.com");
-    }
-
-    @Test
     void sendTest() {
         // given
         Long groupId = 1L;

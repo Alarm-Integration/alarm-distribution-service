@@ -30,17 +30,6 @@ class SMSServiceTest {
     private SMSService smsService;
 
     @Test
-    void getSenderNumberTest() {
-        // Inmemory DB 삽입(userId, number);
-
-        // DB 접속 및 senderNumber 가져오기
-        // String senderNumber =  getSenderNumber(userId);
-        String senderNumber = smsService.getSenderNumber(1L);
-
-//        assertThat(senderNumber).isEqualTo("1544-4370");
-    }
-
-    @Test
     void sendTest() {
         // given
         String appName = "sms";
