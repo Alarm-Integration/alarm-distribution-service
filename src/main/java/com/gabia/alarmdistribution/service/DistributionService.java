@@ -45,6 +45,7 @@ public class DistributionService {
             sendService.get(appName).send(data);
         }
 
+        log.info("{}: userId:{} traceId:{} massage:{}", getClass().getSimpleName(), request.getUserId(), request.getTraceId(), "메세지 적재 완료");
         return true;
     }
 
