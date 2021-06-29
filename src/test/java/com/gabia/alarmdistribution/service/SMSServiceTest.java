@@ -1,21 +1,32 @@
 package com.gabia.alarmdistribution.service;
 
-import com.gabia.alarmdistribution.dto.request.Raw;
-import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import com.gabia.alarmdistribution.util.MemoryAppender;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.SettableListenableFuture;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class SMSServiceTest {
@@ -23,59 +34,91 @@ class SMSServiceTest {
     @Mock
     private KafkaTemplate<String, Map<String, Object>> kafkaTemplate;
 
-    @Mock
-    private Environment env;
-
     @InjectMocks
     private SMSService smsService;
 
+    private MemoryAppender memoryAppender;
+
+    //default
+    private Long groupId = 1L;
+    private Long userId = 1L;
+    private String sender = "01012341234";
+    private List<String> raws = Arrays.asList("T13DA561", "U13DA561", "C13DA561");
+    private String title = "알림 제목";
+    private String content = "알림 내용";
+    private String traceId = "abc";
+    private String topic = "sms";
+
+    @BeforeEach
+    public void setup() {
+        Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        memoryAppender = new MemoryAppender();
+        memoryAppender.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
+        logger.setLevel(Level.INFO);
+        logger.addAppender(memoryAppender);
+        memoryAppender.start();
+    }
+
     @Test
-    void sendTest() {
+    void send_메서드_레코드_적재_성공() throws ExecutionException, InterruptedException {
         // given
-        String appName = "sms";
+        Map<String, Object> data = createDefaultData();
 
-        ArrayList<String> address = new ArrayList<>() {
-            {
-                add("01012341234");
-                add("01043214321");
-            }
-        };
+        ProducerRecord<String, Map<String, Object>> record = new ProducerRecord<>(topic, data);
 
-        Raw raw = Raw.builder()
-                .appName(appName)
-                .address(address)
-                .build();
+        RecordMetadata recordMetadata = new RecordMetadata(new TopicPartition(topic, 1),
+                1, 1, 342, System.currentTimeMillis(), 1, 2);
 
-        List<Raw> raws = Arrays.asList(raw);
+        SendResult<String, Map<String, Object>> sendResult = new SendResult<>(record, recordMetadata);
 
-        Long groupId = 1L;
-        String title = "알림 제목";
-        String content = "알림 내용";
-        List<Integer> bookmarksIds = Arrays.asList(1);
+        SettableListenableFuture future = new SettableListenableFuture<>();
+        future.set(sendResult);
 
-        CommonAlarmRequest commonAlarmRequest = CommonAlarmRequest.builder()
-                .groupId(groupId)
-                .title(title)
-                .content(content)
-                .bookmarks(bookmarksIds)
-                .raws(raws)
-                .build();
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("groupId", commonAlarmRequest.getGroupId());
-        map.put("title", commonAlarmRequest.getTitle());
-        map.put("content", commonAlarmRequest.getTitle());
-        map.put("bookmarks", commonAlarmRequest.getBookmarks());
-        map.put("raws", raws);
-
-        ListenableFuture listenableFuture = mock(ListenableFuture.class);
-        given(env.getProperty("topic.sms")).willReturn("sms");
-        given(kafkaTemplate.send(env.getProperty("topic.sms"), map)).willReturn(listenableFuture);
+        given(kafkaTemplate.send(topic, data)).willReturn(future);
 
         // when
-        boolean isSend = smsService.send(map);
+        ListenableFuture<SendResult<String, Map<String, Object>>> listenableFuture = smsService.send(data);
 
-        // then
-        assertThat(isSend).isEqualTo(true);
+        //then
+        SendResult<String, Map<String, Object>> result = listenableFuture.get();
+        assertThat(result.getProducerRecord().value().get("groupId")).isEqualTo(groupId);
+        assertThat(result.getProducerRecord().value().get("userId")).isEqualTo(userId);
+        assertThat(result.getProducerRecord().value().get("sender")).isEqualTo(sender);
+        assertThat(result.getProducerRecord().value().get("raws")).isEqualTo(raws);
+        assertThat(result.getProducerRecord().value().get("title")).isEqualTo(title);
+        assertThat(result.getProducerRecord().value().get("content")).isEqualTo(content);
+        assertThat(result.getProducerRecord().value().get("traceId")).isEqualTo(traceId);
+        assertThat(memoryAppender.getSize()).isEqualTo(1);
+        assertThat(memoryAppender.contains(String.format("%s: userId:%s traceId:%s massage:%s", "SMSService", userId, traceId, "메세지 적재 성공"), Level.INFO)).isTrue();
+    }
+
+    @Test
+    void send_메서드_레코드_적재_실패() {
+        // given
+        Map<String, Object> data = createDefaultData();
+
+        SettableListenableFuture future = new SettableListenableFuture<>();
+        future.setException(new RuntimeException("Exception Calling Kafka"));
+
+        given(kafkaTemplate.send(topic, data)).willReturn(future);
+
+        // when
+        smsService.send(data);
+
+        //then
+        assertThat(memoryAppender.getSize()).isEqualTo(1);
+        assertThat(memoryAppender.contains(String.format("%s: userId:%s traceId:%s massage:%s", "SMSService", userId, traceId, "Exception Calling Kafka"), Level.ERROR)).isTrue();
+    }
+
+    private Map<String, Object> createDefaultData() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("groupId", groupId);
+        data.put("userId", userId);
+        data.put("sender", sender);
+        data.put("raws", raws);
+        data.put("title", title);
+        data.put("content", content);
+        data.put("traceId", traceId);
+        return data;
     }
 }
