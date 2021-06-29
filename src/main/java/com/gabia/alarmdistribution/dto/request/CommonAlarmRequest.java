@@ -14,13 +14,17 @@ public class CommonAlarmRequest {
     private String content;
     private List<Integer> bookmarks;
     private List<Raw> raws;
+    private Long userId;
+    private String traceId;
 
     @Builder
-    public CommonAlarmRequest(Long groupId, String title, String content, List<Integer> bookmarks, List<Raw> raws) {
+    public CommonAlarmRequest(Long groupId, String title, String content, List<Integer> bookmarks, List<Raw> raws, Long userId, String traceId) {
         this.groupId = groupId;
         this.title = title;
         this.content = content;
         this.bookmarks = bookmarks;
         this.raws = raws;
+        this.userId = userId;
+        this.traceId = traceId;
     }
 }
