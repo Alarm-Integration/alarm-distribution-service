@@ -23,7 +23,7 @@ public class EmailService implements SendService{
     public ListenableFuture<SendResult<String, Map<String, Object>>> send(Map<String, Object> data) {
         ListenableFuture<SendResult<String, Map<String, Object>>> future = kafkaTemplate.send("email", data);
 
-        future.addCallback(new ListenableFutureCallback<SendResult<String, Map<String, Object>>>() {
+        future.addCallback(new ListenableFutureCallback<>() {
             @Override
             public void onFailure(Throwable ex) {
                 handleFailure(data, ex);
@@ -40,12 +40,12 @@ public class EmailService implements SendService{
     private void handleSuccess(Map<String, Object> data) {
         String traceId = (String) data.get("traceId");
         Long userId = (Long) data.get("userId");
-        log.info("EmailService: userId:{} traceId:{} 메세지 적재 성공", userId, traceId);
+        log.info("{}: userId:{} traceId:{} massage:{}", getClass().getSimpleName(), userId, traceId, "메세지 적재 성공");
     }
 
     private void handleFailure(Map<String, Object> data, Throwable ex) {
         Long userId = (Long) data.get("userId");
         String traceId = (String) data.get("traceId");
-        log.error("EmailService: userId:{} traceId:{} 메세지 적재 실패 {}", userId, traceId, ex.getMessage());
+        log.error("{}: userId:{} traceId:{} massage:{}", getClass().getSimpleName(), userId, traceId, ex.getMessage());
     }
 }

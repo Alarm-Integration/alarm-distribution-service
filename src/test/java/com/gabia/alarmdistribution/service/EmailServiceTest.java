@@ -88,7 +88,7 @@ class EmailServiceTest {
         assertThat(result.getProducerRecord().value().get("content")).isEqualTo(content);
         assertThat(result.getProducerRecord().value().get("traceId")).isEqualTo(traceId);
         assertThat(memoryAppender.getSize()).isEqualTo(1);
-        assertThat(memoryAppender.contains(String.format("EmailService: userId:%s traceId:%s 메세지 적재 성공", userId, traceId), Level.INFO)).isTrue();
+        assertThat(memoryAppender.contains(String.format("%s: userId:%s traceId:%s massage:%s", "EmailService", userId, traceId, "메세지 적재 성공"), Level.INFO)).isTrue();
     }
 
     @Test
@@ -106,7 +106,7 @@ class EmailServiceTest {
 
         //then
         assertThat(memoryAppender.getSize()).isEqualTo(1);
-        assertThat(memoryAppender.contains(String.format("EmailService: userId:%s traceId:%s 메세지 적재 실패 %s", userId, traceId, "Exception Calling Kafka"), Level.ERROR)).isTrue();
+        assertThat(memoryAppender.contains(String.format("%s: userId:%s traceId:%s massage:%s", "EmailService", userId, traceId, "Exception Calling Kafka"), Level.ERROR)).isTrue();
     }
 
     private Map<String, Object> createDefaultData() {
