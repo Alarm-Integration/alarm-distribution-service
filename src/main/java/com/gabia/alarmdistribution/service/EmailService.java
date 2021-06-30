@@ -1,5 +1,6 @@
 package com.gabia.alarmdistribution.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -9,15 +10,12 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.util.Map;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service("email")
 public class EmailService implements SendService{
 
-    private KafkaTemplate<String, Map<String, Object>> kafkaTemplate;
-
-    public EmailService(KafkaTemplate<String, Map<String, Object>> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
+    private final KafkaTemplate<String, Map<String, Object>> kafkaTemplate;
 
     @Override
     public ListenableFuture<SendResult<String, Map<String, Object>>> send(Map<String, Object> data) {

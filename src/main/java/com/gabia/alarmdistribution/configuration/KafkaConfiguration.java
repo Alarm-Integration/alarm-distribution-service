@@ -22,22 +22,22 @@ public class KafkaConfiguration {
     private String kafkaServer;
 
     @Bean
-    public KafkaTemplate<String, Map<String, Object>> objectKafkaTemplate(){
-        return new KafkaTemplate<>(objectProducerFactory());
+    public KafkaTemplate<String, Map<String, Object>> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
     }
 
-    private ProducerFactory<String, Map<String, Object>> objectProducerFactory(){
-        return new DefaultKafkaProducerFactory<>(setConfig());
+    @Bean
+    public ProducerFactory<String, Map<String, Object>> producerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
-    // 공통 설정, 전달 받은 객체 -> Json 화
-    private Map<String, Object> setConfig(){
-        Map<String, Object> config = new HashMap<>();
-
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-        return config;
+    @Bean
+    public Map<String, Object> producerConfigs() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(ProducerConfig.ACKS_CONFIG, "all");
+        return props;
     }
 }
