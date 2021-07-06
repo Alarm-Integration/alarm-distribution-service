@@ -24,7 +24,7 @@ public class SwaggerConfig {
         title = "Alarm Distribution Service API " + version;
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .host("awsd")
+                .host("139.150.75.239")
                 .apiInfo(apiInfo(title, version))
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.gabia"))
