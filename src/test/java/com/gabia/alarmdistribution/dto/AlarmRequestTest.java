@@ -1,7 +1,7 @@
 package com.gabia.alarmdistribution.dto;
 
 import com.gabia.alarmdistribution.dto.request.Raw;
-import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
+import com.gabia.alarmdistribution.dto.request.AlarmRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CommonAlarmRequestTest {
+public class AlarmRequestTest {
 
     @Test
     void builder_테스트() {
@@ -32,7 +32,7 @@ public class CommonAlarmRequestTest {
         String traceId = "123";
 
         //when
-        CommonAlarmRequest commonAlarmRequest = CommonAlarmRequest.builder()
+        AlarmRequest alarmRequest = AlarmRequest.builder()
                 .groupId(groupId)
                 .title(title)
                 .content(content)
@@ -43,13 +43,13 @@ public class CommonAlarmRequestTest {
                 .build();
 
         //then
-        assertThat(commonAlarmRequest.getGroupId()).isEqualTo(groupId);
-        assertThat(commonAlarmRequest.getTitle()).isEqualTo(title);
-        assertThat(commonAlarmRequest.getContent()).isEqualTo(content);
-        assertThat(commonAlarmRequest.getBookmarks()).isEqualTo(bookmarksIds);
-        assertThat(commonAlarmRequest.getRaws()).isEqualTo(raws);
-        assertThat(commonAlarmRequest.getUserId()).isEqualTo(userId);
-        assertThat(commonAlarmRequest.getTraceId()).isEqualTo(traceId);
+        assertThat(alarmRequest.getGroupId()).isEqualTo(groupId);
+        assertThat(alarmRequest.getTitle()).isEqualTo(title);
+        assertThat(alarmRequest.getContent()).isEqualTo(content);
+        assertThat(alarmRequest.getBookmarks()).isEqualTo(bookmarksIds);
+        assertThat(alarmRequest.getRaws()).isEqualTo(raws);
+        assertThat(alarmRequest.getUserId()).isEqualTo(userId);
+        assertThat(alarmRequest.getTraceId()).isEqualTo(traceId);
 
     }
 }

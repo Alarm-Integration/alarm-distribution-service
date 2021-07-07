@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CommonAlarmRequest {
+public class AlarmRequest {
     private Long groupId;
     private String title;
     private String content;
@@ -18,7 +18,7 @@ public class CommonAlarmRequest {
     private String traceId;
 
     @Builder
-    public CommonAlarmRequest(Long groupId, String title, String content, List<Integer> bookmarks, List<Raw> raws, Long userId, String traceId) {
+    public AlarmRequest(Long groupId, String title, String content, List<Integer> bookmarks, List<Raw> raws, Long userId, String traceId) {
         this.groupId = groupId;
         this.title = title;
         this.content = content;
