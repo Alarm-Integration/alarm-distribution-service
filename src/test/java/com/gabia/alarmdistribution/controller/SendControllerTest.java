@@ -67,8 +67,9 @@ public class SendControllerTest {
         result
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.result").exists());
+                .andExpect(jsonPath("$.message").value("알림 전송 요청 완료"))
+                .andExpect(jsonPath("$.result").isEmpty());
+
     }
 
     private static String asJsonString(final Object obj) {
