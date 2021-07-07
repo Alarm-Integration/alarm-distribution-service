@@ -2,7 +2,7 @@ package com.gabia.alarmdistribution.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabia.alarmdistribution.dto.request.Raw;
-import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
+import com.gabia.alarmdistribution.dto.request.AlarmRequest;
 import com.gabia.alarmdistribution.service.DistributionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class SendControllerTest {
 
         List<Raw> raws = Arrays.asList(slackRaw, emailRaw, smsRaw);
 
-        CommonAlarmRequest commonAlarmRequest = CommonAlarmRequest.builder()
+        AlarmRequest alarmRequest = AlarmRequest.builder()
                 .groupId(groupId)
                 .title(title)
                 .content(content)
@@ -55,11 +55,11 @@ public class SendControllerTest {
                 .raws(raws)
                 .build();
 
-        given(service.send(commonAlarmRequest)).willReturn(true);
+        given(service.send(alarmRequest)).willReturn(true);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
-                .content(asJsonString(commonAlarmRequest))
+                .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 
@@ -67,8 +67,9 @@ public class SendControllerTest {
         result
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.result").exists());
+                .andExpect(jsonPath("$.message").value("알림 전송 요청 완료"))
+                .andExpect(jsonPath("$.result").isEmpty());
+
     }
 
     private static String asJsonString(final Object obj) {
