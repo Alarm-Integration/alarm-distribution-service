@@ -1,21 +1,19 @@
 package com.gabia.alarmdistribution.service;
 
-import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
+import com.gabia.alarmdistribution.dto.request.AlarmMessage;
+import com.gabia.alarmdistribution.dto.request.AlarmRequest;
 import com.gabia.alarmdistribution.dto.request.Raw;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class DistributionService {
-    private final Map<String, SendService> sendService;
+    private final AlarmService alarmService;
 
-    public boolean send(CommonAlarmRequest request) {
+    public boolean send(AlarmRequest request) {
 
         if (!checkUserInGroup(1L, request.getGroupId())) {
             log.error("DistributionService: 해당 그룹에 속한 유저가 아닙니다");
@@ -29,20 +27,21 @@ public class DistributionService {
         for (Raw raw : request.getRaws()) {
             String appName = raw.getAppName();
 
-            if (!checkGroupAuthority(1L, appName)) {
+            if (!checkGroupAuthority(request.getGroupId(), appName)) {
                 log.error("DistributionService: Group({})은 {} 발송 권한이 없습니다", request.getGroupId(), appName);
                 return false;
             }
 
-            Map<String, Object> data = new HashMap<>();
-            data.put("sender", getGroupSenderAddress(1L, appName));
-            data.put("title", request.getTitle());
-            data.put("content", request.getContent());
-            data.put("raws", raw.getAddress());
-            data.put("traceId", request.getTraceId());
-            data.put("userId", request.getUserId());
+            AlarmMessage alarmMessage = AlarmMessage.builder()
+                    .userId(request.getUserId())
+                    .traceId(request.getTraceId())
+                    .groupId(request.getGroupId())
+                    .raws(raw.getAddress())
+                    .title(request.getTitle())
+                    .content(request.getContent())
+                    .build();
 
-            sendService.get(appName).send(data);
+            alarmService.send(appName, alarmMessage);
         }
 
         log.info("{}: userId:{} traceId:{} massage:{}", getClass().getSimpleName(), request.getUserId(), request.getTraceId(), "메세지 적재 완료");
@@ -57,20 +56,6 @@ public class DistributionService {
     private boolean checkGroupAuthority(Long GroupId, String appName) {
         // todo: GroupId로 그룹을 조회후 해당 그룹이 서드파티(appName) 발송 권한을 가지고 있는지 확인
         return true;
-    }
-
-    private String getGroupSenderAddress(Long GroupId, String appName) {
-        // todo: GroupId와 appName을 가지고 그룹의 대표 발신자 주소를 가져온다
-        if (appName.equals("email"))
-            return "nameks@naver.com";
-
-        if (appName.equals("slack"))
-            return "abc";
-
-        if (appName.equals("sms"))
-            return "01092988726";
-
-        return "default";
     }
 
 }

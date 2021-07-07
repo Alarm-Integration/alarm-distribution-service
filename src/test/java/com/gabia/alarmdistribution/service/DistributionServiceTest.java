@@ -3,7 +3,7 @@ package com.gabia.alarmdistribution.service;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import com.gabia.alarmdistribution.dto.request.CommonAlarmRequest;
+import com.gabia.alarmdistribution.dto.request.AlarmRequest;
 import com.gabia.alarmdistribution.dto.request.Raw;
 import com.gabia.alarmdistribution.util.MemoryAppender;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,26 +12,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.util.concurrent.SettableListenableFuture;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest
 class DistributionServiceTest {
 
     @MockBean
-    private EmailService emailService;
-
-    @MockBean
-    private SlackService slackService;
-
-    @MockBean
-    private SMSService smsService;
+    private AlarmService alarmService;
 
     @Autowired
     private DistributionService service;
@@ -67,7 +60,7 @@ class DistributionServiceTest {
         String content = "알림 내용";
         String traceId = "abc";
 
-        CommonAlarmRequest request = CommonAlarmRequest.builder()
+        AlarmRequest request = AlarmRequest.builder()
                 .groupId(groupId)
                 .userId(userId)
                 .title(title)
@@ -76,11 +69,7 @@ class DistributionServiceTest {
                 .raws(raws)
                 .build();
 
-        SettableListenableFuture settableListenableFuture = new SettableListenableFuture();
-
-        given(emailService.send(any())).willReturn(settableListenableFuture);
-        given(smsService.send(any())).willReturn(settableListenableFuture);
-        given(slackService.send(any())).willReturn(settableListenableFuture);
+        doNothing().when(alarmService).send(any(), any());
 
         // when
         boolean result = service.send(request);
