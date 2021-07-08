@@ -1,15 +1,15 @@
 server:
   port: 30000
 
-eureka:
-  instance:
-    prefer-ip-address: true
-    ip-address: "${HOST_IP}"
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://139.150.75.239:8761/eureka
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#    ip-address: "${HOST_IP}"
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://139.150.75.239:8761/eureka
 
 spring:
   application:
@@ -17,7 +17,7 @@ spring:
 
 kafka:
   bootstrap:
-    servers: 139.150.75.240:9092
+    servers: 10.7.27.17:19092
 
 topic:
   slack: slack
