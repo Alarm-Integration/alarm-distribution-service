@@ -18,25 +18,10 @@ public class Raw {
         this.address = address;
     }
 
-    public static Raw createSlackRaw(List<String> address) {
+    public static Raw createRaw(String appName, List<String> address) {
         return Raw.builder()
-                .appName("slack")
+                .appName(appName)
                 .address(address)
                 .build();
     }
-
-    public static Raw createSMSRaw(List<String> address) {
-        return Raw.builder()
-                .appName("sms")
-                .address(address)
-                .build();
-    }
-
-    public static Raw createEmailRaw(List<String> address) {
-        return Raw.builder()
-                .appName("email")
-                .address(address)
-                .build();
-    }
-
 }

@@ -41,9 +41,9 @@ public class SendControllerTest {
 
         List<Integer> bookmarksIds = Arrays.asList(1, 2);
 
-        Raw slackRaw = Raw.createSlackRaw(Arrays.asList("U1234", "U4321"));
-        Raw smsRaw = Raw.createSMSRaw(Arrays.asList("01012341234", "01043214321"));
-        Raw emailRaw = Raw.createEmailRaw(Arrays.asList("test@gmail.com", "test@naver.com"));
+        Raw slackRaw = Raw.createRaw("slack", Arrays.asList("U1234", "U4321"));
+        Raw smsRaw = Raw.createRaw("sms", Arrays.asList("01012341234", "01043214321"));
+        Raw emailRaw = Raw.createRaw("email", Arrays.asList("test@gmail.com", "test@naver.com"));
 
         List<Raw> raws = Arrays.asList(slackRaw, emailRaw, smsRaw);
 

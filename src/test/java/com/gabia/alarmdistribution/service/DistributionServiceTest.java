@@ -48,9 +48,9 @@ class DistributionServiceTest {
         List<String> smsAddress = Arrays.asList("01012344321", "01037826481", "01027594837");
         List<String> emailAddress = Arrays.asList("test@gmail.com", "tes1@naver.com", "tes1@naver.com");
 
-        Raw slackRaw = Raw.createSlackRaw(slackAddress);
-        Raw emailRaw = Raw.createEmailRaw(emailAddress);
-        Raw smsRaw = Raw.createSMSRaw(smsAddress);
+        Raw slackRaw = Raw.createRaw("slack", slackAddress);
+        Raw emailRaw = Raw.createRaw("email", emailAddress);
+        Raw smsRaw = Raw.createRaw("sms", smsAddress);
 
         List<Raw> raws = Arrays.asList(slackRaw, smsRaw, emailRaw);
 
