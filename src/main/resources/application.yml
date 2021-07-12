@@ -2,14 +2,9 @@ server:
   port: 30000
 
 eureka:
-  instance:
-    prefer-ip-address: true
-    ip-address: "${HOST_IP}"
   client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://139.150.75.239:8761/eureka
+    register-with-eureka: false
+    fetch-registry: false
 
 spring:
   application:
@@ -17,4 +12,4 @@ spring:
 
 kafka:
   bootstrap:
-    servers: 10.7.27.17:9092,10.7.27.18:9092,10.7.27.19:9092
+    servers: 139.150.75.238:19092,139.150.75.239:19092,139.150.75.240:19092
