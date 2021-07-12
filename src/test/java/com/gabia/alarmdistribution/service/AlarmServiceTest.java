@@ -21,7 +21,6 @@ import org.springframework.util.concurrent.SettableListenableFuture;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -40,8 +39,7 @@ class AlarmServiceTest {
     //default
     private Long groupId = 1L;
     private Long userId = 1L;
-    private String sender = "sender@email.com";
-    private List<String> raws = Arrays.asList("test@gmail.com", "t123@gmail.com", "test@naver.com");
+    private List<String> addresses = Arrays.asList("test@gmail.com", "t123@gmail.com", "test@naver.com");
     private String title = "알림 제목";
     private String content = "알림 내용";
     private String traceId = "abc";
@@ -106,7 +104,7 @@ class AlarmServiceTest {
                 .userId(userId)
                 .groupId(groupId)
                 .traceId(traceId)
-                .raws(raws)
+                .receivers(addresses)
                 .title(title)
                 .content(content)
                 .build();

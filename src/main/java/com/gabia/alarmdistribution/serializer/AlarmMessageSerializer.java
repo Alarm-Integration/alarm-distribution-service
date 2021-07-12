@@ -1,12 +1,13 @@
 package com.gabia.alarmdistribution.serializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gabia.alarmdistribution.dto.request.AlarmMessage;
 import org.apache.kafka.common.serialization.Serializer;
 
-public class AlarmMessageSerializer implements Serializer<Object> {
+public class AlarmMessageSerializer implements Serializer<AlarmMessage> {
 
     @Override
-    public byte[] serialize(String topic, Object message) {
+    public byte[] serialize(String topic, AlarmMessage message) {
         byte[] data = null;
         ObjectMapper objectMapper = new ObjectMapper();
         try {

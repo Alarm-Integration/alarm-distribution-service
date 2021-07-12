@@ -36,7 +36,7 @@ public class DistributionService {
                     .userId(request.getUserId())
                     .traceId(request.getTraceId())
                     .groupId(request.getGroupId())
-                    .raws(raw.getAddress())
+                    .receivers(raw.getAddress())
                     .title(request.getTitle())
                     .content(request.getContent())
                     .build();

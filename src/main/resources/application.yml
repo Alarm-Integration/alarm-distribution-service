@@ -17,9 +17,4 @@ spring:
 
 kafka:
   bootstrap:
-    servers: 139.150.75.240:9092
-
-topic:
-  slack: slack
-  email: email
-  sms: sms
+    servers: 10.7.27.17:9092
