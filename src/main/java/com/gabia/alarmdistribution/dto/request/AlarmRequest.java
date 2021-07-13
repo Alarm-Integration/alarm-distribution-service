@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ public class AlarmRequest {
     @NotBlank
     private String content;
 
+    @Size(max=3)
     @NotEmpty
     private Map<String, List<String>> raws;
 

@@ -2,6 +2,11 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+spring:
+  application:
+    name: alarm-distribution-service
+  messages:
+    basename: errors
 
 kafka:
   bootstrap:
