@@ -9,6 +9,8 @@ eureka:
 spring:
   application:
     name: alarm-distribution-service
+  messages:
+    basename: errors
 
 kafka:
   bootstrap:
