@@ -1,7 +1,7 @@
 package com.gabia.alarmdistribution.config;
 
 import com.gabia.alarmdistribution.dto.request.AlarmMessage;
-import com.gabia.alarmdistribution.serializer.AlarmMessageSerializer;
+import com.gabia.alarmdistribution.util.AlarmMessageSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package com.gabia.alarmdistribution.serializer;
+package com.gabia.alarmdistribution.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabia.alarmdistribution.dto.request.AlarmMessage;
