@@ -26,7 +26,7 @@ public class AlarmController {
     }
 
     @PostMapping
-    public ResponseEntity<APIResponse> sendAlarm(@Valid @RequestBody AlarmRequest request, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<APIResponse> sendAlarm(@Valid @RequestBody AlarmRequest request, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }

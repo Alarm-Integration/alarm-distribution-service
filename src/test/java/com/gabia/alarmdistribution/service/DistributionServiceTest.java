@@ -43,7 +43,7 @@ class DistributionServiceTest {
     }
 
     @Test
-    public void send_테스트() {
+    public void send_테스트() throws Exception {
         // given
         Map<String, List<String>> raws = new HashMap<>();
         raws.put("slack", Arrays.asList("U1234", "U4321"));
