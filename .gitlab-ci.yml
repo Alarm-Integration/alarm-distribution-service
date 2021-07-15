@@ -1,0 +1,78 @@
+image: docker:19.03.12
+
+stages:
+  - test
+  - visualize
+  - build
+  - deploy
+
+variables:
+  CONTAINER_NAME: alarm-distribution-service
+  ENVIRONMENT: dev
+
+test:
+  image: gradle:6.9.0-jdk11
+  stage: test
+  script:
+    - gradle test
+  artifacts:
+    paths:
+      - build/jacoco/jacoco.xml
+
+coverage:
+  stage: visualize
+  image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
+  script:
+    - python /opt/cover2cover.py build/jacoco/jacoco.xml $CI_PROJECT_DIR/src/main/java/ > build/cobertura.xml
+  dependencies:
+    - test
+  artifacts:
+    reports:
+      cobertura: build/cobertura.xml
+
+build:
+  image: gradle:6.9.0-jdk11
+  stage: build
+  script:
+    - gradle build -x test
+  artifacts:
+    paths:
+      - build/libs/*.jar
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}
+    policy: push
+    paths:
+      - build/libs/*.jar
+
+build-docker-image:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}
+    policy: pull
+    paths:
+      - build/libs/*.jar
+  script:
+    - docker login -u $DOCKER_HUB_ID -p $DOCKER_HUB_PASSWORD
+    - docker build -t $DOCKER_HUB_ID/$IMAGE_NAME .
+    - docker push $DOCKER_HUB_ID/$IMAGE_NAME
+  environment:
+    name: $ENVIROMENT
+
+deploy:
+  stage: deploy
+  script:
+    - docker pull $DOCKER_HUB_ID/$IMAGE_NAME
+    - "{ docker stop $CONTAINER_NAME; docker rm $CONTAINER_NAME; } || true"
+    - "docker run -d -p $SERVICE_PORT:$SERVICE_PORT \
+    --name $CONTAINER_NAME \
+    -e spring.profiles.active=$ENVIRONMENT \
+    -e HOST=$HOST \
+    -e EUREKA_SERVER=$EUREKA_SERVER \
+    -e KAFKA_SERVER=$KAFKA_SERVER \
+    -e ACCESS_KEY=$ACCESS_KEY \
+    -e SECRET_KEY=$SECRET_KEY \
+    $DOCKER_HUB_ID/$IMAGE_NAME"
+
+  environment:
+    name: $ENVIRONMENT
+    url: $DEV_SERVER
