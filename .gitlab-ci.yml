@@ -4,6 +4,7 @@ stages:
   - test
   - visualize
   - build
+  - package
   - deploy
 
 variables:
@@ -44,8 +45,8 @@ build:
     paths:
       - build/libs/*.jar
 
-build-docker-image:
-  stage: build
+package-docker-image:
+  stage: package
   cache:
     key: ${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}
     policy: pull
@@ -55,24 +56,45 @@ build-docker-image:
     - docker login -u $DOCKER_HUB_ID -p $DOCKER_HUB_PASSWORD
     - docker build -t $DOCKER_HUB_ID/$IMAGE_NAME .
     - docker push $DOCKER_HUB_ID/$IMAGE_NAME
-  environment:
-    name: $ENVIROMENT
 
-deploy:
+g238_deploy:
   stage: deploy
+  tags:
+    - g238
   script:
     - docker pull $DOCKER_HUB_ID/$IMAGE_NAME
     - "{ docker stop $CONTAINER_NAME; docker rm $CONTAINER_NAME; } || true"
     - "docker run -d -p $SERVICE_PORT:$SERVICE_PORT \
     --name $CONTAINER_NAME \
+    -e HOST_IP=$HOST_238_IP \
+    -e CONFIG_SERVER_URL=$CONFIG_SERVER_URL \
     -e spring.profiles.active=$ENVIRONMENT \
-    -e HOST=$HOST \
-    -e EUREKA_SERVER=$EUREKA_SERVER \
-    -e KAFKA_SERVER=$KAFKA_SERVER \
-    -e ACCESS_KEY=$ACCESS_KEY \
-    -e SECRET_KEY=$SECRET_KEY \
     $DOCKER_HUB_ID/$IMAGE_NAME"
 
-  environment:
-    name: $ENVIRONMENT
-    url: $DEV_SERVER
+g239_deploy:
+  stage: deploy
+  tags:
+    - g239
+  script:
+    - docker pull $DOCKER_HUB_ID/$IMAGE_NAME
+    - "{ docker stop $CONTAINER_NAME; docker rm $CONTAINER_NAME; } || true"
+    - "docker run -d -p $SERVICE_PORT:$SERVICE_PORT \
+    --name $CONTAINER_NAME \
+    -e HOST_IP=$HOST_239_IP \
+    -e CONFIG_SERVER_URL=$CONFIG_SERVER_URL \
+    -e spring.profiles.active=$ENVIRONMENT \
+    $DOCKER_HUB_ID/$IMAGE_NAME"
+
+g240_deploy:
+  stage: deploy
+  tags:
+    - g240
+  script:
+    - docker pull $DOCKER_HUB_ID/$IMAGE_NAME
+    - "{ docker stop $CONTAINER_NAME; docker rm $CONTAINER_NAME; } || true"
+    - "docker run -d -p $SERVICE_PORT:$SERVICE_PORT \
+    --name $CONTAINER_NAME \
+    -e HOST_IP=$HOST_240_IP \
+    -e CONFIG_SERVER_URL=$CONFIG_SERVER_URL \
+    -e spring.profiles.active=$ENVIRONMENT \
+    $DOCKER_HUB_ID/$IMAGE_NAME"

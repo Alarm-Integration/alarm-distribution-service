@@ -1,16 +1,16 @@
 server:
   port: 30000
 
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-
 spring:
   application:
     name: alarm-distribution-service
   messages:
     basename: errors
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
 
 kafka:
   bootstrap:
