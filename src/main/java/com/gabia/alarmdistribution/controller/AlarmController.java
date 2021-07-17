@@ -26,12 +26,15 @@ public class AlarmController {
     }
 
     @PostMapping
-    public ResponseEntity<APIResponse> sendAlarm(@Valid @RequestBody AlarmRequest request, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<APIResponse> sendAlarm(@RequestHeader(value = "user-id") Long userId,
+                                                 @RequestHeader(value = "trace-id") String traceId,
+                                                 @Valid @RequestBody AlarmRequest request,
+                                                 BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
 
-        sendService.send(request);
+        sendService.send(userId, traceId, request);
         return ResponseEntity.ok(APIResponse.withMessageAndResult("알림 전송 요청 완료", null));
     }
 }

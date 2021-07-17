@@ -58,20 +58,18 @@ class DistributionServiceTest {
 
         AlarmRequest request = AlarmRequest.builder()
                 .groupId(groupId)
-                .userId(userId)
                 .title(title)
                 .content(content)
-                .traceId(traceId)
                 .raws(raws)
                 .build();
 
         doNothing().when(alarmService).send(any(), any());
 
         // when
-        service.send(request);
+        service.send(userId, traceId, request);
 
         // then
         assertThat(memoryAppender.getSize()).isEqualTo(1);
-        assertThat(memoryAppender.contains(String.format("%s: userId:%s traceId:%s massage:%s", "DistributionService", request.getUserId(), request.getTraceId(), "메세지 적재 완료"), Level.INFO)).isTrue();
+        assertThat(memoryAppender.contains(String.format("%s: userId:%s traceId:%s massage:%s", "DistributionService", userId, traceId, "메세지 적재 완료"), Level.INFO)).isTrue();
     }
 }

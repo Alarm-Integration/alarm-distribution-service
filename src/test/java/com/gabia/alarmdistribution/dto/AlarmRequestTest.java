@@ -23,8 +23,6 @@ public class AlarmRequestTest {
         Long groupId = 1L;
         String title = "알림 제목";
         String content = "알림 내용";
-        Long userId = 1L;
-        String traceId = "123";
 
         //when
         AlarmRequest alarmRequest = AlarmRequest.builder()
@@ -32,8 +30,6 @@ public class AlarmRequestTest {
                 .title(title)
                 .content(content)
                 .raws(raws)
-                .userId(userId)
-                .traceId(traceId)
                 .build();
 
         //then
@@ -41,8 +37,5 @@ public class AlarmRequestTest {
         assertThat(alarmRequest.getTitle()).isEqualTo(title);
         assertThat(alarmRequest.getContent()).isEqualTo(content);
         assertThat(alarmRequest.getRaws()).isEqualTo(raws);
-        assertThat(alarmRequest.getUserId()).isEqualTo(userId);
-        assertThat(alarmRequest.getTraceId()).isEqualTo(traceId);
-
     }
 }

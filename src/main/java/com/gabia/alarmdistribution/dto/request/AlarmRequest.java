@@ -18,9 +18,6 @@ public class AlarmRequest {
     @NotNull
     private Long groupId;
 
-    @NotNull
-    private Long userId;
-
     @NotBlank
     private String title;
 
@@ -31,16 +28,11 @@ public class AlarmRequest {
     @NotEmpty
     private Map<String, List<String>> raws;
 
-    @NotBlank
-    private String traceId;
-
     @Builder
-    public AlarmRequest(Long groupId, String title, String content, Map<String, List<String>> raws, Long userId, String traceId) {
+    public AlarmRequest(Long groupId, String title, String content, Map<String, List<String>> raws) {
         this.groupId = groupId;
         this.title = title;
         this.content = content;
         this.raws = raws;
-        this.userId = userId;
-        this.traceId = traceId;
     }
 }

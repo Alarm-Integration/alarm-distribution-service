@@ -15,11 +15,11 @@ import java.util.Map;
 public class DistributionService {
     private final AlarmService alarmService;
 
-    public void send(AlarmRequest request) throws Exception {
+    public void send(Long userId, String traceId, AlarmRequest request) throws Exception {
 
-        if (!checkUserInGroup(request.getUserId(), request.getGroupId())) {
-            log.error("DistributionService: 사용자({})은 그룹({})에 속하지 않습니다", request.getUserId(), request.getGroupId());
-            throw new Exception(String.format("DistributionService: 사용자(%s)가 그룹(%s)에 속하지 않습니다", request.getUserId(), request.getGroupId()));
+        if (!checkUserInGroup(userId, request.getGroupId())) {
+            log.error("DistributionService: 사용자({})은 그룹({})에 속하지 않습니다", userId, request.getGroupId());
+            throw new Exception(String.format("DistributionService: 사용자(%s)가 그룹(%s)에 속하지 않습니다", userId, request.getGroupId()));
         }
 
         for (Map.Entry<String, List<String>> entry : request.getRaws().entrySet()) {
@@ -32,8 +32,8 @@ public class DistributionService {
             }
 
             AlarmMessage alarmMessage = AlarmMessage.builder()
-                    .userId(request.getUserId())
-                    .traceId(request.getTraceId())
+                    .userId(userId)
+                    .traceId(traceId)
                     .groupId(request.getGroupId())
                     .receivers(receivers)
                     .title(request.getTitle())
@@ -43,7 +43,7 @@ public class DistributionService {
             alarmService.send(appName, alarmMessage);
         }
 
-        log.info("{}: userId:{} traceId:{} massage:{}", getClass().getSimpleName(), request.getUserId(), request.getTraceId(), "메세지 적재 완료");
+        log.info("{}: userId:{} traceId:{} massage:{}", getClass().getSimpleName(), userId, traceId, "메세지 적재 완료");
     }
 
     private boolean checkUserInGroup(Long userId, Long GroupId) {
