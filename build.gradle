@@ -32,6 +32,10 @@ jar {
 }
 
 dependencies {
+    //fluentd
+    implementation "org.komamitsu:fluency-core:2.6.0"
+    implementation "org.komamitsu:fluency-fluentd:2.6.0"
+
     //swagger
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
@@ -86,7 +90,7 @@ jacocoTestCoverageVerification {
                 minimum = 0.7
             }
 
-            excludes = []
+            excludes = ['com.gabia.alarmdistribution.util.LogSender']
         }
     }
 }
