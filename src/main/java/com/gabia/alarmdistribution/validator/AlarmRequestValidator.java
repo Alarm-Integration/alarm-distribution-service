@@ -1,22 +1,23 @@
 package com.gabia.alarmdistribution.validator;
 
+import com.gabia.alarmdistribution.config.AppProperties;
 import com.gabia.alarmdistribution.dto.request.AlarmRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import javax.validation.constraints.NotEmpty;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class AlarmRequestValidator implements Validator {
-    private static final String emailRegex = "^(.+)@(.+)$";
-    private static final String smsRegex = "^01(?:0|1|[6-9])[.-]?(\\d{3}|\\d{4})[.-]?(\\d{4})$";
-    private static final String slackRegex = "^[CUT]\\w*$";
 
+    private final AppProperties appProperties;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -25,42 +26,39 @@ public class AlarmRequestValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-
-        List<String> supported = Arrays.asList("slack", "email", "sms");
         AlarmRequest alarmRequest = (AlarmRequest) target;
-
-        @NotEmpty
+        Set<String> supportedApp = appProperties.getApplications().keySet();
         Map<String, List<String>> raws = alarmRequest.getRaws();
-
 
         if (raws == null)
             return;
 
-        raws.forEach((key, value) -> {
-            if (!supported.contains(key)){
-                errors.rejectValue("raws", "NotSupported", new Object[]{key}, "해당 앱은 발송을 지원하지 않습니다");
-            }
+        if(!validateSupportedApp(errors, supportedApp, raws))
+            return;
+
+        validateReceiverType(errors, raws);
+    }
+
+    private boolean validateSupportedApp(Errors errors, Set<String> supported, Map<String, List<String>> raws) {
+        List<String> notSupportedApp = raws.keySet().stream().filter(appName -> !supported.contains(appName)).collect(Collectors.toList());
+
+        if (notSupportedApp.isEmpty())
+            return true;
+
+        notSupportedApp.forEach(appName -> {
+            errors.rejectValue("raws", "NotSupported", new Object[]{appName}, "해당 앱은 발송을 지원하지 않습니다");
         });
 
-        if (raws.containsKey("slack")){
-            Pattern pattern = Pattern.compile(slackRegex);
-            if (raws.get("slack").stream().anyMatch(slack -> !pattern.matcher(slack).matches())) {
-                errors.rejectValue("raws", "Type.slack", null, null);
-            }
-        }
+        return false;
+    }
 
-        if (raws.containsKey("email")) {
-            Pattern pattern = Pattern.compile(emailRegex);
-            if (raws.get("email").stream().anyMatch(email -> !pattern.matcher(email).matches())) {
-                errors.rejectValue("raws", "Type", new Object[]{"email", "email"}, null);
-            }
-        }
+    private void validateReceiverType(Errors errors, Map<String, List<String>> raws) {
+        raws.forEach((appName, receivers) -> {
+            String regex = appProperties.getApplications().get(appName).getRegex();
+            Pattern pattern = Pattern.compile(regex);
 
-        if (raws.containsKey("sms")) {
-            Pattern pattern = Pattern.compile(smsRegex);
-            if (raws.get("sms").stream().anyMatch(sms -> !pattern.matcher(sms).matches())) {
-                errors.rejectValue("raws", "Type", new Object[]{"sms", "전화번호"}, null);
-            }
-        }
+            if(receivers.stream().anyMatch(receiver -> !pattern.matcher(receiver).matches()))
+                errors.rejectValue("raws", String.format("Type.%s", appName), new Object[]{appName}, null);
+        });
     }
 }

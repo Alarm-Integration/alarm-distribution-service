@@ -295,8 +295,8 @@ public class AlarmControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
                 .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("Type"))
-                .andExpect(jsonPath("$.result.errors[0].message").value("email 서비스는 email 형식만 지원합니다"));
+                .andExpect(jsonPath("$.result.errors[0].code").value("Type.email"))
+                .andExpect(jsonPath("$.result.errors[0].message").value("email:메일 형식만 지원합니다"));
     }
 
     @Test
@@ -329,8 +329,8 @@ public class AlarmControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
                 .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("Type"))
-                .andExpect(jsonPath("$.result.errors[0].message").value("sms 서비스는 전화번호 형식만 지원합니다"));
+                .andExpect(jsonPath("$.result.errors[0].code").value("Type.sms"))
+                .andExpect(jsonPath("$.result.errors[0].message").value("sms:전화번호 형식만 지원합니다"));
     }
 
     @Test
@@ -364,7 +364,7 @@ public class AlarmControllerTest {
                 .andExpect(jsonPath("$.message").value("BindException"))
                 .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
                 .andExpect(jsonPath("$.result.errors[0].code").value("Type.slack"))
-                .andExpect(jsonPath("$.result.errors[0].message").value("유효한 아이디 값이 아닙니다"));
+                .andExpect(jsonPath("$.result.errors[0].message").value("slack:유효한 아이디 값이 아닙니다"));
     }
 
     @Test

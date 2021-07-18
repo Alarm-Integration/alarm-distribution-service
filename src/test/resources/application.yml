@@ -12,3 +12,16 @@ eureka:
 kafka:
   bootstrap:
     servers: 139.150.75.238:19092,139.150.75.239:19092,139.150.75.240:19092
+
+fluentd:
+  uri: 139.150.75.240
+  port: 24224
+
+alarm:
+  applications:
+    email:
+      regex: ^(.+)@(.+)$
+    sms:
+      regex: ^01(?:0|1|[6-9])[.-]?(\d{3}|\d{4})[.-]?(\d{4})$
+    slack:
+      regex: ^[CUT]\w*$

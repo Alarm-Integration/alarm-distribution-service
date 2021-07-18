@@ -48,7 +48,7 @@ public class AlarmService {
 
     private void handleFailure(AlarmMessage message, String appName, Throwable ex) {
         try {
-            logSender.send(message.getUserId(), appName, message.getTraceId(), "메세지 적재 실");
+            logSender.send(message.getUserId(), appName, message.getTraceId(), "메세지 적재 실패");
         } catch (Exception e) {
             e.printStackTrace();
         }

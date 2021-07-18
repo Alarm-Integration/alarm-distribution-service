@@ -32,6 +32,8 @@ jar {
 }
 
 dependencies {
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
     //fluentd
     implementation "org.komamitsu:fluency-core:2.6.0"
     implementation "org.komamitsu:fluency-fluentd:2.6.0"
