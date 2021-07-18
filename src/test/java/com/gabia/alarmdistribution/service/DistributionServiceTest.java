@@ -45,10 +45,10 @@ class DistributionServiceTest {
     @Test
     public void send_테스트() throws Exception {
         // given
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
 
         Long groupId = 1L;
         Long userId = 1L;
@@ -60,7 +60,7 @@ class DistributionServiceTest {
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
         doNothing().when(alarmService).send(any(), any());

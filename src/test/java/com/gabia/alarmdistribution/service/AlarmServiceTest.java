@@ -108,7 +108,7 @@ class AlarmServiceTest {
                 .userId(userId)
                 .groupId(groupId)
                 .traceId(traceId)
-                .receivers(addresses)
+                .addresses(addresses)
                 .title(title)
                 .content(content)
                 .build();

@@ -42,7 +42,7 @@ public class AlarmControllerTest {
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(getDefaultRaw())
+                .receivers(getDefaultReceivers())
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -72,7 +72,7 @@ public class AlarmControllerTest {
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(getDefaultRaw())
+                .receivers(getDefaultReceivers())
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -103,7 +103,7 @@ public class AlarmControllerTest {
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(getDefaultRaw())
+                .receivers(getDefaultReceivers())
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -131,7 +131,7 @@ public class AlarmControllerTest {
 //                .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(getDefaultRaw())
+                .receivers(getDefaultReceivers())
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -160,7 +160,7 @@ public class AlarmControllerTest {
                 .groupId(groupId)
 //                .title(title)
                 .content(content)
-                .raws(getDefaultRaw())
+                .receivers(getDefaultReceivers())
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -188,7 +188,7 @@ public class AlarmControllerTest {
                 .groupId(groupId)
                 .title(title)
 //                .content(content)
-                .raws(getDefaultRaw())
+                .receivers(getDefaultReceivers())
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -210,13 +210,13 @@ public class AlarmControllerTest {
     }
 
     @Test
-    public void 사용자_알림_전송_실패_raws_없음() throws Exception {
+    public void 사용자_알림_전송_실패_receivers_없음() throws Exception {
         //given
         AlarmRequest alarmRequest = AlarmRequest.builder()
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-//                .raws(getDefaultRaw())
+//                .receivers(getDefaultRaw())
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -233,7 +233,7 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
                 .andExpect(jsonPath("$.result.errors[0].code").value("NotEmpty"));
     }
 
@@ -244,7 +244,7 @@ public class AlarmControllerTest {
 //                .groupId(groupId)
 //                .title(title)
 //                .content(content)
-                .raws(getDefaultRaw())
+                .receivers(getDefaultReceivers())
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -268,16 +268,16 @@ public class AlarmControllerTest {
     @Test
     public void 사용자_알림_전송_실패_email_형식_아님() throws Exception {
         //given
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("testnaver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("testnaver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
 
         AlarmRequest alarmRequest = AlarmRequest.builder()
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -294,7 +294,7 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
                 .andExpect(jsonPath("$.result.errors[0].code").value("Type.email"))
                 .andExpect(jsonPath("$.result.errors[0].message").value("email:메일 형식만 지원합니다"));
     }
@@ -302,16 +302,16 @@ public class AlarmControllerTest {
     @Test
     public void 사용자_알림_전송_실패_전화번호_형식_아님() throws Exception {
         //given
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("000A00000"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("000A00000"));
 
         AlarmRequest alarmRequest = AlarmRequest.builder()
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -328,7 +328,7 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
                 .andExpect(jsonPath("$.result.errors[0].code").value("Type.sms"))
                 .andExpect(jsonPath("$.result.errors[0].message").value("sms:전화번호 형식만 지원합니다"));
     }
@@ -336,16 +336,16 @@ public class AlarmControllerTest {
     @Test
     public void 사용자_알림_전송_실패_슬랙_형식_아님() throws Exception {
         //given
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("012900201"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("012900201"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
 
         AlarmRequest alarmRequest = AlarmRequest.builder()
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -362,25 +362,25 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
                 .andExpect(jsonPath("$.result.errors[0].code").value("Type.slack"))
                 .andExpect(jsonPath("$.result.errors[0].message").value("slack:유효한 아이디 값이 아닙니다"));
     }
 
     @Test
-    public void 사용자_알림_전송_실패_4개_이상의_서비스_요청() throws Exception {
+    public void 사용자_알림_전송_실패_지원_가능한_서비스_개수_이상_요청() throws Exception {
         //given
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-        raws.put("service", Arrays.asList("01012341234", "01043214321"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
+        receivers.put("service", Arrays.asList("01012341234", "01043214321"));
 
         AlarmRequest alarmRequest = AlarmRequest.builder()
                 .groupId(groupId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
         doNothing().when(service).send(userId, traceId, alarmRequest);
@@ -397,8 +397,8 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("Size"));
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
+                .andExpect(jsonPath("$.result.errors[0].code").value("SizeLimit"));
     }
 
     private String asJsonString(final Object obj) {
@@ -409,11 +409,11 @@ public class AlarmControllerTest {
         }
     }
 
-    private Map<String, List<String>> getDefaultRaw() {
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-        return raws;
+    private Map<String, List<String>> getDefaultReceivers() {
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
+        return receivers;
     }
 }

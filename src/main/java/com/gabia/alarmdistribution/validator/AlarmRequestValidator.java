@@ -28,37 +28,51 @@ public class AlarmRequestValidator implements Validator {
     public void validate(Object target, Errors errors) {
         AlarmRequest alarmRequest = (AlarmRequest) target;
         Set<String> supportedApp = appProperties.getApplications().keySet();
-        Map<String, List<String>> raws = alarmRequest.getRaws();
+        int supportedAppSize = supportedApp.size();
 
-        if (raws == null)
+        Map<String, List<String>> receivers = alarmRequest.getReceivers();
+
+        if (receivers == null)
             return;
 
-        if(!validateSupportedApp(errors, supportedApp, raws))
+        if (!validateReceiverSize(errors, supportedAppSize, receivers))
             return;
 
-        validateReceiverType(errors, raws);
+        if (!validateSupportedApp(errors, supportedApp, receivers))
+            return;
+
+        validateReceiverType(errors, receivers);
     }
 
-    private boolean validateSupportedApp(Errors errors, Set<String> supported, Map<String, List<String>> raws) {
-        List<String> notSupportedApp = raws.keySet().stream().filter(appName -> !supported.contains(appName)).collect(Collectors.toList());
+    private boolean validateReceiverSize(Errors errors, int supportedAppSize, Map<String, List<String>> receivers) {
+        if (supportedAppSize < receivers.size()) {
+            errors.rejectValue("receivers", "SizeLimit", new Object[]{supportedAppSize}, null);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateSupportedApp(Errors errors, Set<String> supported, Map<String, List<String>> receivers) {
+        List<String> notSupportedApp = receivers.keySet().stream().filter(appName -> !supported.contains(appName)).collect(Collectors.toList());
 
         if (notSupportedApp.isEmpty())
             return true;
 
         notSupportedApp.forEach(appName -> {
-            errors.rejectValue("raws", "NotSupported", new Object[]{appName}, "해당 앱은 발송을 지원하지 않습니다");
+            errors.rejectValue("receivers", "NotSupported", new Object[]{appName}, "해당 앱은 발송을 지원하지 않습니다");
         });
 
         return false;
     }
 
-    private void validateReceiverType(Errors errors, Map<String, List<String>> raws) {
-        raws.forEach((appName, receivers) -> {
+    private void validateReceiverType(Errors errors, Map<String, List<String>> receivers) {
+        receivers.forEach((appName, addresses) -> {
             String regex = appProperties.getApplications().get(appName).getRegex();
             Pattern pattern = Pattern.compile(regex);
 
-            if(receivers.stream().anyMatch(receiver -> !pattern.matcher(receiver).matches()))
-                errors.rejectValue("raws", String.format("Type.%s", appName), new Object[]{appName}, null);
+            if (addresses.stream().anyMatch(address -> !pattern.matcher(address).matches()))
+                errors.rejectValue("receivers", String.format("Type.%s", appName), new Object[]{appName}, null);
         });
     }
 }

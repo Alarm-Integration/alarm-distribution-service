@@ -17,14 +17,14 @@ public class DistributionService {
 
     public void send(Long userId, String traceId, AlarmRequest request) {
 
-        Map<String, List<String>> raws = request.getRaws();
+        Map<String, List<String>> receivers = request.getReceivers();
 
-        raws.forEach((appName, receivers) -> {
+        receivers.forEach((appName, addresses) -> {
             AlarmMessage alarmMessage = AlarmMessage.builder()
                     .userId(userId)
                     .traceId(traceId)
                     .groupId(request.getGroupId())
-                    .receivers(receivers)
+                    .addresses(addresses)
                     .title(request.getTitle())
                     .content(request.getContent())
                     .build();
