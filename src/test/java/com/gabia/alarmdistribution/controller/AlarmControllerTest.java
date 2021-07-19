@@ -366,40 +366,6 @@ public class AlarmControllerTest {
                 .andExpect(jsonPath("$.result.errors[0].message").value("slack:유효한 아이디 값이 아닙니다"));
     }
 
-    @Test
-    public void 사용자_알림_전송_실패_지원_가능한_서비스_개수_이상_요청() throws Exception {
-        //given
-        Map<String, List<String>> receivers = new HashMap<>();
-        receivers.put("slack", Arrays.asList("U1234", "U4321"));
-        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
-        receivers.put("service", Arrays.asList("01012341234", "01043214321"));
-
-        AlarmRequest alarmRequest = AlarmRequest.builder()
-                .groupId(groupId)
-                .title(title)
-                .content(content)
-                .receivers(receivers)
-                .build();
-
-        doNothing().when(service).send(userId, traceId, alarmRequest);
-
-        //when
-        ResultActions result = this.mockMvc.perform(post("/")
-                .header("user-id", userId)
-                .header("trace-id", traceId)
-                .content(asJsonString(alarmRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-
-        //then
-        result
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("SizeLimit"));
-    }
-
     private String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
