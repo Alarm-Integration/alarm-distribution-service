@@ -27,7 +27,25 @@ ext {
     set('springCloudVersion', "2020.0.3")
 }
 
+jar {
+    enabled = false
+}
+
 dependencies {
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    //fluentd
+    implementation "org.komamitsu:fluency-core:2.6.0"
+    implementation "org.komamitsu:fluency-fluentd:2.6.0"
+
+    //swagger
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+    //config
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -74,7 +92,7 @@ jacocoTestCoverageVerification {
                 minimum = 0.7
             }
 
-            excludes = []
+            excludes = ['com.gabia.alarmdistribution.util.LogSender']
         }
     }
 }

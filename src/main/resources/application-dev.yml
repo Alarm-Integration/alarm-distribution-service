@@ -1,20 +1,13 @@
 server:
   port: 30000
 
-eureka:
-  instance:
-    prefer-ip-address: true
-    ip-address: "${HOST}"
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: "http://${EUREKA_SERVER}/eureka/"
-
 spring:
   application:
     name: alarm-distribution-service
+  messages:
+    basename: errors
 
-kafka:
-  bootstrap:
-    servers: "${KAFKA_SERVER}"
+eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: "${HOST_IP}"
