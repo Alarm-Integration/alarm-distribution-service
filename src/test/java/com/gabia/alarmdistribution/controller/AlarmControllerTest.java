@@ -29,32 +29,28 @@ public class AlarmControllerTest {
     @MockBean
     private DistributionService service;
 
+    private Long userId = 1L;
+    private String traceId = "abc";
+    private Long groupId = 1L;
+    private String title = "알림 제목";
+    private String content = "알림 내용";
+
     @Test
     public void 사용자_알림_전송_성공() throws Exception {
         //given
-        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-
         AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
                 .groupId(groupId)
-                .traceId(traceId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(getDefaultReceivers())
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -64,36 +60,27 @@ public class AlarmControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("알림 전송 요청 완료"))
                 .andExpect(jsonPath("$.result").isEmpty());
-
     }
 
     @Test
-    public void 사용자_알림_전송_실패_userId_없음() throws Exception {
+    public void 사용자_알림_전송_실패_user_id_header_없음() throws Exception {
         //given
-//        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
+        String missingHeaderName = "user-id";
+        String expectedErrorMessage = String.format("Required request header '%s' for method parameter type Long is not present", missingHeaderName);
 
         AlarmRequest alarmRequest = AlarmRequest.builder()
-//                .userId(userId)
                 .groupId(groupId)
-                .traceId(traceId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(getDefaultReceivers())
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+//                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -101,40 +88,58 @@ public class AlarmControllerTest {
         //then
         result
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("userId"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("NotNull"));
-
+                .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"))
+                .andExpect(jsonPath("$.result.error_message").value(expectedErrorMessage))
+                .andExpect(jsonPath("$.result.required_header_name").value(missingHeaderName));
     }
 
+    @Test
+    public void 사용자_알림_전송_실패_trace_id_header_없음() throws Exception {
+        //given
+        String missingHeaderName = "trace-id";
+        String expectedErrorMessage = String.format("Required request header '%s' for method parameter type String is not present", missingHeaderName);
+
+        AlarmRequest alarmRequest = AlarmRequest.builder()
+                .groupId(groupId)
+                .title(title)
+                .content(content)
+                .receivers(getDefaultReceivers())
+                .build();
+
+        doNothing().when(service).send(userId, traceId, alarmRequest);
+
+        //when
+        ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+//                .header("trace-id", traceId)
+                .content(asJsonString(alarmRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        //then
+        result
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"))
+                .andExpect(jsonPath("$.result.error_message").value(expectedErrorMessage))
+                .andExpect(jsonPath("$.result.required_header_name").value(missingHeaderName));
+    }
 
     @Test
     public void 사용자_알림_전송_실패_groupId_없음() throws Exception {
         //given
-        Long userId = 1L;
-//        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-
         AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
 //                .groupId(groupId)
-                .traceId(traceId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(getDefaultReceivers())
                 .build();
 
-
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -149,70 +154,21 @@ public class AlarmControllerTest {
     }
 
     @Test
-    public void 사용자_알림_전송_실패_traceId_없음() throws Exception {
-        //given
-        Long userId = 1L;
-        Long groupId = 1L;
-//        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-
-        AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
-                .groupId(groupId)
-//                .traceId(traceId)
-                .title(title)
-                .content(content)
-                .raws(raws)
-                .build();
-
-        doNothing().when(service).send(alarmRequest);
-
-        //when
-        ResultActions result = this.mockMvc.perform(post("/")
-                .content(asJsonString(alarmRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-
-        //then
-        result
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("traceId"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("NotBlank"));
-
-    }
-
-    @Test
     public void 사용자_알림_전송_실패_title_없음() throws Exception {
         //given
-        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-//        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-
         AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
                 .groupId(groupId)
-                .traceId(traceId)
 //                .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(getDefaultReceivers())
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -223,35 +179,24 @@ public class AlarmControllerTest {
                 .andExpect(jsonPath("$.message").value("BindException"))
                 .andExpect(jsonPath("$.result.errors[0].field").value("title"))
                 .andExpect(jsonPath("$.result.errors[0].code").value("NotBlank"));
-
     }
 
     @Test
     public void 사용자_알림_전송_실패_content_없음() throws Exception {
         //given
-        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-//        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-
         AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
                 .groupId(groupId)
-                .traceId(traceId)
                 .title(title)
 //                .content(content)
-                .raws(raws)
+                .receivers(getDefaultReceivers())
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -265,31 +210,21 @@ public class AlarmControllerTest {
     }
 
     @Test
-    public void 사용자_알림_전송_실패_raws_없음() throws Exception {
+    public void 사용자_알림_전송_실패_receivers_없음() throws Exception {
         //given
-        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-//        Map<String, List<String>> raws = new HashMap<>();
-//        raws.put("slack", Arrays.asList("U1234", "U4321"));
-//        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-//        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-
         AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
                 .groupId(groupId)
-                .traceId(traceId)
                 .title(title)
                 .content(content)
-//                .raws(raws)
+//                .receivers(getDefaultRaw())
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -298,36 +233,26 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
                 .andExpect(jsonPath("$.result.errors[0].code").value("NotEmpty"));
     }
 
     @Test
-    public void 사용자_알림_전송_실패_userId_groupId_traceId_없음() throws Exception {
+    public void 사용자_알림_전송_실패_groupId_title_content_없음() throws Exception {
         //given
-//        Long userId = 1L;
-//        Long groupId = 1L;
-//        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-
         AlarmRequest alarmRequest = AlarmRequest.builder()
-//                .userId(userId)
 //                .groupId(groupId)
-//                .traceId(traceId)
-                .title(title)
-                .content(content)
-                .raws(raws)
+//                .title(title)
+//                .content(content)
+                .receivers(getDefaultReceivers())
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -336,36 +261,31 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result..field").value(containsInAnyOrder("traceId", "groupId", "userId")))
-                .andExpect(jsonPath("$.result..code").value(containsInAnyOrder("NotNull", "NotNull", "NotBlank")));
+                .andExpect(jsonPath("$.result..field").value(containsInAnyOrder("groupId", "title", "content")))
+                .andExpect(jsonPath("$.result..code").value(containsInAnyOrder("NotNull", "NotBlank", "NotBlank")));
     }
 
     @Test
     public void 사용자_알림_전송_실패_email_형식_아님() throws Exception {
         //given
-        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("testnaver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("testnaver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
 
         AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
                 .groupId(groupId)
-                .traceId(traceId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -374,38 +294,32 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("Type"))
-                .andExpect(jsonPath("$.result.errors[0].message").value("email 서비스는 email 형식만 지원합니다"));
-
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
+                .andExpect(jsonPath("$.result.errors[0].code").value("Type.email"))
+                .andExpect(jsonPath("$.result.errors[0].message").value("email:메일 형식만 지원합니다"));
     }
 
     @Test
     public void 사용자_알림_전송_실패_전화번호_형식_아님() throws Exception {
         //given
-        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("000A00000"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("000A00000"));
 
         AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
                 .groupId(groupId)
-                .traceId(traceId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -414,37 +328,32 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("Type"))
-                .andExpect(jsonPath("$.result.errors[0].message").value("sms 서비스는 전화번호 형식만 지원합니다"));
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
+                .andExpect(jsonPath("$.result.errors[0].code").value("Type.sms"))
+                .andExpect(jsonPath("$.result.errors[0].message").value("sms:전화번호 형식만 지원합니다"));
     }
 
     @Test
     public void 사용자_알림_전송_실패_슬랙_형식_아님() throws Exception {
         //given
-        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("012900201"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("012900201"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
 
         AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
                 .groupId(groupId)
-                .traceId(traceId)
                 .title(title)
                 .content(content)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
-        doNothing().when(service).send(alarmRequest);
+        doNothing().when(service).send(userId, traceId, alarmRequest);
 
         //when
         ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
                 .content(asJsonString(alarmRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -453,12 +362,46 @@ public class AlarmControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
                 .andExpect(jsonPath("$.result.errors[0].code").value("Type.slack"))
-                .andExpect(jsonPath("$.result.errors[0].message").value("유효한 아이디 값이 아닙니다"));
+                .andExpect(jsonPath("$.result.errors[0].message").value("slack:유효한 아이디 값이 아닙니다"));
     }
 
-    private static String asJsonString(final Object obj) {
+    @Test
+    public void 사용자_알림_전송_실패_지원_가능한_서비스_개수_이상_요청() throws Exception {
+        //given
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
+        receivers.put("service", Arrays.asList("01012341234", "01043214321"));
+
+        AlarmRequest alarmRequest = AlarmRequest.builder()
+                .groupId(groupId)
+                .title(title)
+                .content(content)
+                .receivers(receivers)
+                .build();
+
+        doNothing().when(service).send(userId, traceId, alarmRequest);
+
+        //when
+        ResultActions result = this.mockMvc.perform(post("/")
+                .header("user-id", userId)
+                .header("trace-id", traceId)
+                .content(asJsonString(alarmRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        //then
+        result
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("BindException"))
+                .andExpect(jsonPath("$.result.errors[0].field").value("receivers"))
+                .andExpect(jsonPath("$.result.errors[0].code").value("SizeLimit"));
+    }
+
+    private String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
@@ -466,45 +409,11 @@ public class AlarmControllerTest {
         }
     }
 
-
-    @Test
-    public void 사용자_알림_전송_실패_4개_이상의_서비스_요청() throws Exception {
-        //given
-        Long userId = 1L;
-        Long groupId = 1L;
-        String traceId = "abc";
-        String title = "알림 제목";
-        String content = "알림 내용";
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
-        raws.put("service", Arrays.asList("01012341234", "01043214321"));
-
-        AlarmRequest alarmRequest = AlarmRequest.builder()
-                .userId(userId)
-                .groupId(groupId)
-                .traceId(traceId)
-                .title(title)
-                .content(content)
-                .raws(raws)
-                .build();
-
-        doNothing().when(service).send(alarmRequest);
-
-        //when
-        ResultActions result = this.mockMvc.perform(post("/")
-                .content(asJsonString(alarmRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-
-        //then
-        result
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("BindException"))
-                .andExpect(jsonPath("$.result.errors[0].field").value("raws"))
-                .andExpect(jsonPath("$.result.errors[0].code").value("Size"));
-
+    private Map<String, List<String>> getDefaultReceivers() {
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
+        return receivers;
     }
-
 }

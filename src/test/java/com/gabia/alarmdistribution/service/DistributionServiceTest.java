@@ -45,10 +45,10 @@ class DistributionServiceTest {
     @Test
     public void send_테스트() throws Exception {
         // given
-        Map<String, List<String>> raws = new HashMap<>();
-        raws.put("slack", Arrays.asList("U1234", "U4321"));
-        raws.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
-        raws.put("sms", Arrays.asList("01012341234", "01043214321"));
+        Map<String, List<String>> receivers = new HashMap<>();
+        receivers.put("slack", Arrays.asList("U1234", "U4321"));
+        receivers.put("email", Arrays.asList("test@gmail.com", "test@naver.com"));
+        receivers.put("sms", Arrays.asList("01012341234", "01043214321"));
 
         Long groupId = 1L;
         Long userId = 1L;
@@ -58,20 +58,18 @@ class DistributionServiceTest {
 
         AlarmRequest request = AlarmRequest.builder()
                 .groupId(groupId)
-                .userId(userId)
                 .title(title)
                 .content(content)
-                .traceId(traceId)
-                .raws(raws)
+                .receivers(receivers)
                 .build();
 
         doNothing().when(alarmService).send(any(), any());
 
         // when
-        service.send(request);
+        service.send(userId, traceId, request);
 
         // then
         assertThat(memoryAppender.getSize()).isEqualTo(1);
-        assertThat(memoryAppender.contains(String.format("%s: userId:%s traceId:%s massage:%s", "DistributionService", request.getUserId(), request.getTraceId(), "메세지 적재 완료"), Level.INFO)).isTrue();
+        assertThat(memoryAppender.contains(String.format("%s: userId:%s traceId:%s massage:%s", "DistributionService", userId, traceId, "메세지 적재 완료"), Level.INFO)).isTrue();
     }
 }

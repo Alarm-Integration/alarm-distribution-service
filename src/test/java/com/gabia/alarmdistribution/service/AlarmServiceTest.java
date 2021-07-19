@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.gabia.alarmdistribution.dto.request.AlarmMessage;
+import com.gabia.alarmdistribution.util.LogSender;
 import com.gabia.alarmdistribution.util.MemoryAppender;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -27,6 +28,9 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class AlarmServiceTest {
+
+    @Mock
+    private LogSender logSender;
 
     @Mock
     private KafkaTemplate<String, AlarmMessage> kafkaTemplate;
@@ -104,7 +108,7 @@ class AlarmServiceTest {
                 .userId(userId)
                 .groupId(groupId)
                 .traceId(traceId)
-                .receivers(addresses)
+                .addresses(addresses)
                 .title(title)
                 .content(content)
                 .build();
