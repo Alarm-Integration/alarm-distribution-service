@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
+import java.io.IOException;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -25,35 +27,34 @@ public class AlarmService {
 
             @Override
             public void onFailure(Throwable ex) {
+
                 handleFailure(alarmMessage, topic, ex);
             }
 
             @Override
             public void onSuccess(SendResult<String, AlarmMessage> result) {
-                handleSuccess(alarmMessage, topic);
+                handleSuccess(alarmMessage);
             }
 
         });
     }
 
-    private void handleSuccess(AlarmMessage message, String appName) {
-        try {
-            logSender.send(message.getUserId(), appName, message.getTraceId(), "메세지 적재 성공");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void handleSuccess(AlarmMessage message) {
         log.info("{}: userId:{} traceId:{} massage:{}",
                 getClass().getSimpleName(), message.getUserId(), message.getTraceId(), "메세지 적재 성공");
     }
 
     private void handleFailure(AlarmMessage message, String appName, Throwable ex) {
-        try {
-            logSender.send(message.getUserId(), appName, message.getTraceId(), "메세지 적재 실패");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         log.error("{}: userId:{} traceId:{} massage:{}",
                 getClass().getSimpleName(), message.getUserId(), message.getTraceId(), ex.getMessage());
+
+        message.getAddresses().forEach(address -> {
+            try {
+                logSender.sendAlarmResults(appName, message.getTraceId(), address);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }

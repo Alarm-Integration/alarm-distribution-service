@@ -33,7 +33,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<APIResponse> missingRequestHeaderExceptionHandler(MissingRequestHeaderException e){
+    public ResponseEntity<APIResponse> missingRequestHeaderExceptionHandler(MissingRequestHeaderException e) {
         log.error(e.getMessage());
 
         Map<String, String> errorBody = new HashMap<>();
