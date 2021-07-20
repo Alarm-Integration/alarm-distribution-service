@@ -1,6 +1,5 @@
 package com.gabia.alarmdistribution.util;
 
-import com.gabia.alarmdistribution.dto.request.AlarmMessage;
 import com.gabia.alarmdistribution.dto.request.AlarmRequest;
 import org.komamitsu.fluency.Fluency;
 import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;

@@ -20,13 +20,13 @@ public class DistributionService {
 
     public void send(Long userId, String traceId, AlarmRequest request) {
 
-        Map<String, List<String>> receivers = request.getReceivers();
-
         try {
             logSender.sendAlarmRequest(userId, traceId, request);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Map<String, List<String>> receivers = request.getReceivers();
 
         receivers.forEach((appName, addresses) -> {
             AlarmMessage alarmMessage = AlarmMessage.builder()

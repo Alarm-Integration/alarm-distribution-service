@@ -20,7 +20,7 @@ public class AlarmDistributionServiceApplication {
 
     @LoadBalanced
     @Bean
-    public RestTemplate restTemplate(){
+    public RestTemplate restTemplate() {
         return new RestTemplate();
     }
 }

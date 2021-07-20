@@ -9,7 +9,7 @@ public class MemoryAppender extends ListAppender<ILoggingEvent> {
     public boolean contains(String string, Level level) {
         return this.list.stream()
                 .anyMatch(event -> event.getFormattedMessage().toString().contains(string)
-                        && event.getLevel().equals(level));
+                                   && event.getLevel().equals(level));
     }
 
     public int getSize() {
