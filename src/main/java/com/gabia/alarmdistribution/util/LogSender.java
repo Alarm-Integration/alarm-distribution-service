@@ -1,5 +1,6 @@
 package com.gabia.alarmdistribution.util;
 
+import com.gabia.alarmdistribution.dto.request.AlarmMessage;
 import org.komamitsu.fluency.Fluency;
 import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,15 +20,31 @@ public class LogSender {
     @Value("${fluentd.port}")
     private int fluentdServerPort;
 
-    public void send(Long userId, String appName, String traceId, String resultMsg) throws IOException {
-        String tag = "alarm.access";
+    public void sendAlarmRequest(AlarmMessage message) throws IOException {
+        String tag = "alarm.request.access";
 
         Map<String, Object> event = new HashMap<>();
-        event.put("user_id", userId);
-        event.put("app_name", appName);
-        event.put("trace_id", traceId);
-        event.put("result_msg", resultMsg);
+        event.put("user_id", message.getUserId());
+        event.put("request_id", message.getTraceId());
+        event.put("title", message.getTitle());
+        event.put("content", message.getContent());
         event.put("created_at", LocalDateTime.now().toString());
+
+        Fluency fluency = new FluencyBuilderForFluentd().build(fluentdServerHost, fluentdServerPort);
+        fluency.emit(tag, event);
+        fluency.close();
+    }
+
+    public void sendAlarmResults(String appName, String requestId, String address) throws IOException {
+        String tag = "alarm.result.access";
+
+        Map<String, Object> event = new HashMap<>();
+        event.put("app_name", appName);
+        event.put("request_id", requestId);
+        event.put("log_message", "시스템 장애");
+        event.put("is_success", false);
+        event.put("address", address);
+
         Fluency fluency = new FluencyBuilderForFluentd().build(fluentdServerHost, fluentdServerPort);
         fluency.emit(tag, event);
         fluency.close();
