@@ -42,6 +42,11 @@ public class AlarmService {
     private void handleSuccess(AlarmMessage message, String appName) {
         log.info("{}: userId:{} traceId:{} massage:{}",
                 getClass().getSimpleName(), message.getUserId(), message.getTraceId(), "메세지 적재 성공");
+        try {
+            logSender.sendAlarmRequest(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleFailure(AlarmMessage message, String appName, Throwable ex) {
