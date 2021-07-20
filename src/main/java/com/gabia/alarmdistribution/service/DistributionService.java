@@ -2,10 +2,12 @@ package com.gabia.alarmdistribution.service;
 
 import com.gabia.alarmdistribution.dto.request.AlarmMessage;
 import com.gabia.alarmdistribution.dto.request.AlarmRequest;
+import com.gabia.alarmdistribution.util.LogSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +16,15 @@ import java.util.Map;
 @Service
 public class DistributionService {
     private final AlarmService alarmService;
+    private final LogSender logSender;
 
     public void send(Long userId, String traceId, AlarmRequest request) {
+
+        try {
+            logSender.sendAlarmRequest(userId, traceId, request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Map<String, List<String>> receivers = request.getReceivers();
 
