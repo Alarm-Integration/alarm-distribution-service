@@ -10,12 +10,14 @@ stages:
 variables:
   CONTAINER_NAME: alarm-distribution-service
   ENVIRONMENT: dev
+  JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/build/jacoco/jacocoCsv'
 
 test:
   image: gradle:6.9.0-jdk11
   stage: test
   script:
     - gradle test
+    - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' $JACOCO_CSV_LOCATION
   artifacts:
     paths:
       - build/jacoco/jacoco.xml
