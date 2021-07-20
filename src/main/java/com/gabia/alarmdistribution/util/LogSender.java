@@ -1,6 +1,7 @@
 package com.gabia.alarmdistribution.util;
 
 import com.gabia.alarmdistribution.dto.request.AlarmMessage;
+import com.gabia.alarmdistribution.dto.request.AlarmRequest;
 import org.komamitsu.fluency.Fluency;
 import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,14 +21,14 @@ public class LogSender {
     @Value("${fluentd.port}")
     private int fluentdServerPort;
 
-    public void sendAlarmRequest(AlarmMessage message) throws IOException {
+    public void sendAlarmRequest(Long userId, String traceId, AlarmRequest request) throws IOException {
         String tag = "alarm.request.access";
 
         Map<String, Object> event = new HashMap<>();
-        event.put("user_id", message.getUserId());
-        event.put("request_id", message.getTraceId());
-        event.put("title", message.getTitle());
-        event.put("content", message.getContent());
+        event.put("user_id", userId);
+        event.put("request_id", traceId);
+        event.put("title", request.getTitle());
+        event.put("content", request.getContent());
         event.put("created_at", LocalDateTime.now().toString());
 
         Fluency fluency = new FluencyBuilderForFluentd().build(fluentdServerHost, fluentdServerPort);
