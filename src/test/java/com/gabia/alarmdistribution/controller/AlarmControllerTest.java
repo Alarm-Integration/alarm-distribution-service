@@ -58,7 +58,11 @@ public class AlarmControllerTest {
         //then
         result
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("알림 전송 요청 완료"));
+                .andExpect(jsonPath("$.message").value("알림 전송 요청 완료"))
+                .andExpect(jsonPath("$.result.requestId").value(traceId))
+                .andExpect(jsonPath("$.result.groupId").value(groupId))
+                .andExpect(jsonPath("$.result.title").value(title))
+                .andExpect(jsonPath("$.result.content").value(content));
     }
 
     @Test

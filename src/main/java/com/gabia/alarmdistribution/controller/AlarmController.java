@@ -2,6 +2,7 @@ package com.gabia.alarmdistribution.controller;
 
 import com.gabia.alarmdistribution.dto.request.AlarmRequest;
 import com.gabia.alarmdistribution.dto.response.APIResponse;
+import com.gabia.alarmdistribution.dto.response.AlarmResponse;
 import com.gabia.alarmdistribution.service.DistributionService;
 import com.gabia.alarmdistribution.validator.AlarmRequestValidator;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class AlarmController {
         }
 
         sendService.send(userId, traceId, request);
-        return ResponseEntity.ok(APIResponse.withMessageAndResult("알림 전송 요청 완료", null));
+
+        AlarmResponse response = AlarmResponse.createFrom(traceId, request);
+        return ResponseEntity.ok(APIResponse.withMessageAndResult("알림 전송 요청 완료", response));
     }
 }
